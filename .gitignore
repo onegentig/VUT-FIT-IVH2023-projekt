@@ -1,4 +1,6 @@
 .vscode
+**.zip
+_xmsgs
 vhdltool.lic
 vhdltool-config.yaml
 **-private**
