@@ -14,6 +14,8 @@ VHDL (celým *VHSIC HDL* — **V**ery **H**igh **S**peed **I**ntegrated **C**irc
   - *Architektúra* definuje správanie
 - `:=` priraďuje hodnotu premennej alebo sekvenčne signálu, `<=` priraďuje hodnotu signálu paralelne (alebo v procese alebo v procedúre)
 
+--------------------
+
 - [Sumár VHDL](#sumár-vhdl)
   - [Dátové objekty](#dátové-objekty)
     - [Konštanta](#konštanta)
@@ -73,6 +75,8 @@ VHDL (celým *VHSIC HDL* — **V**ery **H**igh **S**peed **I**ntegrated **C**irc
       - [Rezistor](#rezistor)
       - [Kondenzátor](#kondenzátor)
   - [Zdroje](#zdroje)
+
+--------------------
 
 ## Dátové objekty ##
 
