@@ -10,8 +10,9 @@ Zadanie: ??
 
 ### TODO-List
 
-* [] ⏰ Zadanie ??
-* [] ⏰ Deadline 05.05
+* [ ] ⏰ Deadline prvej časti 13.03
+* [ ] ⏰ Deadline druhej časti 03.04
+* [ ] ⏰ Deadline 08.05
 
 ## Môže sa hodiť
 
