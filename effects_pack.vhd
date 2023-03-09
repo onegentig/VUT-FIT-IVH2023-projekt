@@ -33,7 +33,7 @@ PACKAGE BODY effects_pack IS
 	BEGIN
 		-- DATA nemoze byt prazdny a ROWS musi byt vacsi ako 0
 		IF DATA'LENGTH = 0 OR ROWS <= 0 THEN
-			RETURN "";
+			RETURN "X";
 		END IF;
 
 		-- Pocet stlpcov
@@ -55,26 +55,23 @@ PACKAGE BODY effects_pack IS
 	END FUNCTION;
 
 	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL IS
-		VARIABLE N               : REAL;    -- REAL(DATA)
-		VARIABLE LG              : NATURAL; -- LOG2(N)
+		VARIABLE LG              : REAL; -- LOG2(N)
 	BEGIN
-		-- DATA nemoze byt mensie ako 0
+		-- DATA nemoze byt mensie alebo rovne 0
+		--   Df(log2) = (0, inf>
 		IF DATA <= 0 THEN
 			RETURN 1;
 		END IF;
 
-		-- Cast na real
-		N  := REAL(DATA);
-
 		-- Vypocet logaritmu
-		LG := NATURAL(FLOOR(LOG2(N)));
+		LG := LOG2(REAL(DATA));
 
-		-- Cislo uz je mocnina dvojky
-		IF LG ** 2 = NATURAL(N) OR LG = 1 THEN
+		-- Ak je logaritmus cele cislo, cislo uz je mocnina dvojky
+		IF LG = REAL(NATURAL(LG)) THEN
 			RETURN DATA;
 		END IF;
 
-		RETURN NATURAL(2 ** (LG + 1));
+		RETURN 2 ** (NATURAL(FLOOR(LG)) + 1);
 	END FUNCTION;
 
 END effects_pack;
