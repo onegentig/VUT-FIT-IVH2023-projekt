@@ -16,6 +16,7 @@ _xmsgs
 **.html
 pn_info
 isim/**.exe**
+.hdl_checker/
 isim/temp
 xilinxsim.ini
 vhdltool.lic
