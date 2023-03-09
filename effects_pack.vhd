@@ -1,3 +1,8 @@
+-- Balik funkcii a vyctov pre IVH projekt 2023
+-- @author Onegen Something <xonege99@vutbr.cz>
+-- @date 2023-03-09
+--
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
@@ -5,7 +10,7 @@ USE ieee.math_real.ALL;
 
 PACKAGE effects_pack IS
 
-	-- Výčet smerov
+	-- Vycet smerov
 	TYPE DIRECTION_T IS (DIR_LEFT, DIR_RIGHT, DIR_TOP);
 
 	-- Funkcia GETCOLUMN vracia stlpec dlzky ROWS z 2D matice, ktoru reprezentuje DATA
@@ -26,34 +31,34 @@ PACKAGE BODY effects_pack IS
 		VARIABLE COLS : INTEGER;
 		VARIABLE I    : INTEGER;
 	BEGIN
-		-- DATA nemôže byť prázdny a ROWS musí byť väčší ako 0
+		-- DATA nemoze byt prazdny a ROWS musi byt vacsi ako 0
 		IF DATA'LENGTH = 0 OR ROWS <= 0 THEN
-			RETURN (OTHERS => 'X');
+			RETURN "";
 		END IF;
 
-		-- Počet stĺpcov
+		-- Pocet stlpcov
 		COLS := DATA'LENGTH / ROWS;
 
 		IF COLID >= COLS THEN
-			-- COLID mimo rozsah  -> posledný stĺpec
+			-- COLID mimo rozsah  -> posledny stlpec
 			I := COLS - 1;
 		ELSIF COLID < 0 THEN
-			-- COLID menšie ako 0 -> prvý stĺpec
+			-- COLID mensie ako 0 -> prvy stlpec
 			I := 0;
 		ELSE
 			-- COLID v rozsahu
 			I := COLID;
 		END IF;
 
-		-- Návrat stĺpca z matice
+		-- Navrat stlpca z matice
 		RETURN DATA(I * ROWS TO (I + 1) * ROWS - 1);
 	END FUNCTION;
 
 	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL IS
-		VARIABLE N               : REAL;
-		VARIABLE LG              : REAL;
+		VARIABLE N               : REAL;    -- REAL(DATA)
+		VARIABLE LG              : NATURAL; -- LOG2(N)
 	BEGIN
-		-- DATA nemôže byť 0
+		-- DATA nemoze byt 0
 		IF DATA <= 0 THEN
 			RETURN 0;
 		END IF;
@@ -61,11 +66,11 @@ PACKAGE BODY effects_pack IS
 		-- Cast na real
 		N  := REAL(DATA);
 
-		-- Výpočet logaritmu
-		LG := FLOOR(LOG2(N));
+		-- Vypocet logaritmu
+		LG := NATURAL(FLOOR(LOG2(N)));
 
-		-- Číslo už je mocnina dvojky
-		IF LG ** 2 = N THEN
+		-- Cislo uz je mocnina dvojky
+		IF LG ** 2 = NATURAL(N) THEN
 			RETURN DATA;
 		END IF;
 
