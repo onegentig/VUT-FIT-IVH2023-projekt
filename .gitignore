@@ -6,6 +6,7 @@
 **.o
 **.log
 **.lso
+**.gise
 **.stx
 **.xst
 **.xsf
@@ -16,8 +17,12 @@ _xmsgs
 **.html
 pn_info
 isim/**.exe**
-.hdl_checker/
 isim/temp
+isim/work
+xst
+iseconfig
+ipcore_dir
+.hdl_checker/
 xilinxsim.ini
 vhdltool.lic
 vhdltool-config.yaml
