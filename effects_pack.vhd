@@ -40,18 +40,18 @@ PACKAGE BODY effects_pack IS
 		COLS := DATA'LENGTH / ROWS;
 
 		IF COLID >= COLS THEN
-			-- COLID mimo rozsah  -> posledny stlpec
-			I := COLS - 1;
-		ELSIF COLID < 0 THEN
-			-- COLID mensie ako 0 -> prvy stlpec
+			-- COLID mimo rozsah  -> prvy stlpec
 			I := 0;
+		ELSIF COLID < 0 THEN
+			-- COLID mensie ako 0 -> posledny stlpec
+			I := COLS - 1;
 		ELSE
 			-- COLID v rozsahu
 			I := COLID;
 		END IF;
 
 		-- Navrat stlpca z matice
-		RETURN DATA(I * ROWS TO (I + 1) * ROWS - 1);
+		RETURN DATA(I * ROWS TO (ROWS * I) + (ROWS - 1));
 	END FUNCTION;
 
 	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL IS
