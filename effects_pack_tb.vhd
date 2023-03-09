@@ -25,6 +25,11 @@ BEGIN
 	BEGIN
 		WAIT FOR 1 ps;
 
+		REPORT "======================================" SEVERITY NOTE;
+		REPORT "*      effects_pack testbench        *" SEVERITY NOTE;
+		REPORT "======================================" SEVERITY NOTE;
+		REPORT " " SEVERITY NOTE;
+
 		REPORT "========= GETCOLUMN() zadanie =========" SEVERITY NOTE;
 		RES_1 <= GETCOLUMN(DATA_1, 0, 3);
 		WAIT FOR 1 ps;
@@ -103,7 +108,7 @@ BEGIN
 		ASSERT n2n_r = 64 REPORT "FAIL! NEAREST2N(42) /= 64" SEVERITY ERROR;
 		ASSERT n2n_r /= 64 REPORT "PASS! NEAREST2N(42) == 64" SEVERITY NOTE;
 
-		REPORT "======== NEAREST2N() rozšírené ========" SEVERITY NOTE;
+		REPORT "======== NEAREST2N() rozsirene ========" SEVERITY NOTE;
 		n2n_a := 0;
 		n2n_r := NEAREST2N(n2n_a);
 		ASSERT n2n_r = 1 REPORT "FAIL! NEAREST2N(0) /= 1" SEVERITY ERROR;
@@ -111,13 +116,33 @@ BEGIN
 
 		n2n_a := 1;
 		n2n_r := NEAREST2N(n2n_a);
-		ASSERT n2n_r = 2 REPORT "FAIL! NEAREST2N(1) /= 2" SEVERITY ERROR;
-		ASSERT n2n_r /= 2 REPORT "PASS! NEAREST2N(1) == 2" SEVERITY NOTE;
+		ASSERT n2n_r = 1 REPORT "FAIL! NEAREST2N(1) /= 1" SEVERITY ERROR;
+		ASSERT n2n_r /= 1 REPORT "PASS! NEAREST2N(1) == 1" SEVERITY NOTE;
 
 		n2n_a := 2;
 		n2n_r := NEAREST2N(n2n_a);
 		ASSERT n2n_r = 2 REPORT "FAIL! NEAREST2N(2) /= 2" SEVERITY ERROR;
 		ASSERT n2n_r /= 2 REPORT "PASS! NEAREST2N(2) == 2" SEVERITY NOTE;
+
+		n2n_a := 3;
+		n2n_r := NEAREST2N(n2n_a);
+		ASSERT n2n_r = 4 REPORT "FAIL! NEAREST2N(3) /= 4" SEVERITY ERROR;
+		ASSERT n2n_r /= 4 REPORT "PASS! NEAREST2N(3) == 4" SEVERITY NOTE;
+
+		n2n_a := 4;
+		n2n_r := NEAREST2N(n2n_a);
+		ASSERT n2n_r = 4 REPORT "FAIL! NEAREST2N(4) /= 4" SEVERITY ERROR;
+		ASSERT n2n_r /= 4 REPORT "PASS! NEAREST2N(4) == 4" SEVERITY NOTE;
+
+		n2n_a := 63;
+		n2n_r := NEAREST2N(n2n_a);
+		ASSERT n2n_r = 64 REPORT "FAIL! NEAREST2N(63) /= 64" SEVERITY ERROR;
+		ASSERT n2n_r /= 64 REPORT "PASS! NEAREST2N(63) == 64" SEVERITY NOTE;
+
+		n2n_a := 64;
+		n2n_r := NEAREST2N(n2n_a);
+		ASSERT n2n_r = 64 REPORT "FAIL! NEAREST2N(64) /= 64" SEVERITY ERROR;
+		ASSERT n2n_r /= 64 REPORT "PASS! NEAREST2N(64) == 64" SEVERITY NOTE;
 
 		n2n_a := 65;
 		n2n_r := NEAREST2N(n2n_a);
