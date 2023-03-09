@@ -58,9 +58,9 @@ PACKAGE BODY effects_pack IS
 		VARIABLE N               : REAL;    -- REAL(DATA)
 		VARIABLE LG              : NATURAL; -- LOG2(N)
 	BEGIN
-		-- DATA nemoze byt 0
+		-- DATA nemoze byt mensie ako 0
 		IF DATA <= 0 THEN
-			RETURN 0;
+			RETURN 1;
 		END IF;
 
 		-- Cast na real
@@ -70,7 +70,7 @@ PACKAGE BODY effects_pack IS
 		LG := NATURAL(FLOOR(LOG2(N)));
 
 		-- Cislo uz je mocnina dvojky
-		IF LG ** 2 = NATURAL(N) THEN
+		IF LG ** 2 = NATURAL(N) OR LG = 1 THEN
 			RETURN DATA;
 		END IF;
 
