@@ -10,7 +10,7 @@ USE ieee.math_real.ALL;
 
 PACKAGE effects_pack IS
 
-	-- Vycet smerov
+	-- Vycet smerov pre posuv obrazu
 	TYPE DIRECTION_T IS (DIR_LEFT, DIR_RIGHT, DIR_TOP);
 
 	-- Funkcia GETCOLUMN vracia stlpec dlzky ROWS z 2D matice, ktoru reprezentuje DATA
@@ -21,6 +21,7 @@ PACKAGE effects_pack IS
 	FUNCTION GETCOLUMN (SIGNAL DATA : IN STD_LOGIC_VECTOR; COLID : IN INTEGER; ROWS : IN INTEGER) RETURN STD_LOGIC_VECTOR;
 
 	-- Funkcia NEAREST2N vracia najblizsiu mocninu dvojky pre cislo DATA
+	-- Pokial DATA uz je mocnina dvojky, vracia DATA
 	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL;
 
 END effects_pack;
@@ -58,7 +59,7 @@ PACKAGE BODY effects_pack IS
 		VARIABLE LG              : REAL; -- LOG2(N)
 	BEGIN
 		-- DATA nemoze byt mensie alebo rovne 0
-		--   Df(log2) = (0, inf>
+		--   D(log2) = (0, inf>
 		IF DATA <= 0 THEN
 			RETURN 1;
 		END IF;
@@ -66,7 +67,7 @@ PACKAGE BODY effects_pack IS
 		-- Vypocet logaritmu
 		LG := LOG2(REAL(DATA));
 
-		-- Ak je logaritmus cele cislo, cislo uz je mocnina dvojky
+		-- Ak je logaritmus cele cislo, parameter už je mocnina 2
 		IF LG = REAL(NATURAL(LG)) THEN
 			RETURN DATA;
 		END IF;
