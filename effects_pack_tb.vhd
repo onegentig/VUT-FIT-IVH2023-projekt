@@ -278,7 +278,8 @@ BEGIN
 
 		REPORT "======================================" SEVERITY NOTE;
 		REPORT " " SEVERITY NOTE;
-		REPORT "Testbench ended with " & INTEGER'image(cnt_pass) & " passed and " & INTEGER'image(cnt_fail) & " failed asserts." SEVERITY NOTE;
+		REPORT "Testbench skoncil s " & INTEGER'image(cnt_pass) & " PASSed a "
+			& INTEGER'image(cnt_fail) & " FAILed assertami." SEVERITY NOTE;
 
 		WAIT;
 	END PROCESS;

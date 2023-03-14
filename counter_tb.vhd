@@ -84,13 +84,20 @@ BEGIN
 			WAIT FOR CLK_period;
 
 			-- Test citacov
-			ASSERT EN1 = b2sl(clk_i MOD 2 = 0) REPORT "!FAIL! EN1 incorrect at CLK " & INTEGER'image(clk_i) SEVERITY ERROR;
-			ASSERT EN2 = b2sl(clk_i MOD 3 = 0) REPORT "!FAIL! EN2 incorrect at CLK " & INTEGER'image(clk_i) SEVERITY ERROR;
-			ASSERT EN3 = b2sl(clk_i MOD 5 = 0) REPORT "!FAIL! EN3 incorrect at CLK " & INTEGER'image(clk_i) SEVERITY ERROR;
+			ASSERT EN1 = b2sl(clk_i MOD 2 = 0) REPORT "FAIL! Nespravny EN1 v CLK "
+				& INTEGER'image(clk_i) SEVERITY ERROR;
+			ASSERT EN2 = b2sl(clk_i MOD 3 = 0) REPORT "FAIL! Nespravny EN2 v CLK "
+				& INTEGER'image(clk_i) SEVERITY ERROR;
+			ASSERT EN3 = b2sl(clk_i MOD 5 = 0) REPORT "FAIL! Nespravny EN3 v CLK "
+				& INTEGER'image(clk_i) SEVERITY ERROR;
 
 			-- Celkovy stav
-			passed_now := (EN1 = b2sl(clk_i MOD 2 = 0)) AND (EN2 = b2sl(clk_i MOD 3 = 0)) AND (EN3 = b2sl(clk_i MOD 5 = 0));
-			ASSERT passed_now = FALSE REPORT "!PASS! All counters correct at CLK " & INTEGER'image(clk_i) SEVERITY NOTE;
+			passed_now := (EN1 = b2sl(clk_i MOD 2 = 0))
+				AND (EN2 = b2sl(clk_i MOD 3 = 0))
+				AND (EN3 = b2sl(clk_i MOD 5 = 0));
+			ASSERT passed_now = FALSE REPORT "PASS! Vsetky citace spravne v CLK "
+				& INTEGER'image(clk_i) SEVERITY NOTE;
+
 			IF passed_now = TRUE THEN
 				cnt_pass := cnt_pass + 1;
 			ELSE
