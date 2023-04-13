@@ -10,19 +10,19 @@ Zadanie: [ZADANI.pdf](ZADANI.pdf), originál [MOODLE PDF](https://moodle.vut.cz/
 
 ----------------------------------------------
 
-- **Podúloha 1** — ?? / 10
+- **Podúloha 1** — 10 / 10
   - [X] ⏰ 2023-02-27 **Zadanie**
   - [X] ⏰ 2023-03-13 **Deadline**
-- **Podúloha 2** — ?? / 15
-  - [ ] ⏰ 2023-02-27 **Zadanie**
-  - [ ] ⏰ 2023-03-04 **Deadline**
+- **Podúloha 2** — 15 / 15
+  - [X] ⏰ 2023-02-27 **Zadanie**
+  - [X] ⏰ 2023-03-04 **Deadline**
 - **Konečný výsledok** — ?? / 65
   - [ ] ⏰ 2023-05-08 **Deadline**
-  - [ ] Instanciácia a ovládanie — ?? / 20
-  - [ ] Posuvy — ?? / 15
-  - [ ] Výstupná animácia — ?? / 10
-  - [ ] Pamäť a pamäťový testbench — ?? / 10
-  - [ ] Stavový testbench — ?? / 10
+  - Instanciácia a ovládanie — ?? / 20
+  - Posuvy — ?? / 15
+  - Výstupná animácia — ?? / 10
+  - Pamäť a pamäťový testbench — ?? / 10
+  - Stavový testbench — ?? / 10
 
 ----------------------------------------------
 
