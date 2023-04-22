@@ -1,20 +1,26 @@
 *
 !*/
 
-README.md
-ZADANI.md
-ivh_projekt.xise
+!README.md
+!ZADANI.md
+!ivh_projekt.xise
 
 # Podúloha 1
-effects_pack.vhd
-effects_pack_tb.vhd
+!effects_pack.vhd
+!effects_pack_tb.vhd
 
 # Podúloha 2
-counter.vhd
-counter_tb.vhd
+!counter.vhd
+!counter_tb.vhd
 
 # Konečná úloha - kostra (read-only)
-fpga.vhd
-tlv_gp_ifc.vhd
-clkgen.vhd
-clkgen_config.vhd
+!fpga.vhd
+!fpga_inst.vhd
+!tlv_gp_ifc.vhd
+!clkgen.vhd
+!clkgen_config.vhd
+
+# Konečná úloha - implementácia
+!column.vhd
+!fsm.vhd
+!rom.vhd
