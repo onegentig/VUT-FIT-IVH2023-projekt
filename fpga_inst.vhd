@@ -3,15 +3,22 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
 
 LIBRARY work;
-USE work.fsm.ALL;
+USE work.effects_pack.ALL;
 
 ARCHITECTURE behavioral OF tlv_gp_ifc IS
 	SIGNAL A           : STD_LOGIC_VECTOR(3 DOWNTO 0)  := "0001";          -- Adresa stlpca
 	SIGNAL R           : STD_LOGIC_VECTOR(7 DOWNTO 0)  := "01011100";      -- Stav stlpca
 	SIGNAL CNT         : STD_LOGIC_VECTOR(23 DOWNTO 0) := (OTHERS => '0'); -- 1s - 25MHz / 20M ~ 24b
+	SIGNAL RST         : STD_LOGIC := '0';
 
+	SIGNAL DIRECTION_i : DIRECTION_T;
+	SIGNAL EN_i        : STD_LOGIC;
 	SIGNAL CNT_REFRESH : STD_LOGIC_VECTOR(7 DOWNTO 0);                     -- Citac pre obnovu displeja
 	SIGNAL CNT_ANIM    : STD_LOGIC_VECTOR(7 DOWNTO 0);                     -- Citac pre ovladanie animacie
+	SIGNAL STAT_COL    : MATRIX_T := (OTHERS => (OTHERS => '0'));
+	SIGNAL STAT_INIT   : MATRIX_T := (OTHERS => "01011100");
+	SIGNAL NEIGH_L     : MATRIX_T;
+	SIGNAL NEIGH_R     : MATRIX_T;
 BEGIN
 	-- -----------------------
 	--        Citace
@@ -39,6 +46,35 @@ BEGIN
 			DIRECTION => DIRECTION_i,
 			EN        => EN_i
 		);
+
+	-- -----------------------
+	--        Stlpce
+	-- -----------------------
+	COLUMN_MAP: FOR i IN 0 TO 15 GENERATE
+		column_inst : ENTITY work.column
+			PORT MAP (
+				CLK         => clk,
+				RESET       => RST,
+				STATE       => STAT_COL(i),
+				INIT_STATE  => STAT_INIT(i),
+				NEIGH_LEFT  => NEIGH_L(i),
+				NEIGH_RIGHT => NEIGH_R(i),
+				DIRECTION   => DIRECTION_i,
+				EN          => EN_i
+			);
+	END GENERATE;
+
+	-- Prepojenie susedov
+	NEIGH_L(0) <= STAT_COL(15);
+	NEIGH_R(15) <= STAT_COL(0);
+
+	LEFT_MAP_GEN: FOR i IN 1 TO 15 GENERATE
+	    NEIGH_L(i) <= STAT_COL(i - 1);
+	END GENERATE;
+
+	RIGHT_MAP_GEN: FOR i IN 0 TO 14 GENERATE
+	    NEIGH_R(i) <= STAT_COL(i + 1);
+	END GENERATE;
 
 	-- Mapovani vystupu
 	X(6)  <= A(3);

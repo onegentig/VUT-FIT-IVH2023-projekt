@@ -8,13 +8,13 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
 
 LIBRARY work;
-USE work.fsm.ALL;
+USE work.effects_pack.ALL;
 
 ENTITY fsm IS
 	PORT (
 		CLK       : IN STD_LOGIC;
 		CNT_ANIM  : IN STD_LOGIC_VECTOR (7 DOWNTO 0);
-		DIRECTION : OUT STD_LOGIC;
+		DIRECTION : OUT DIRECTION_T;
 		EN        : OUT STD_LOGIC
 	);
 END ENTITY fsm;

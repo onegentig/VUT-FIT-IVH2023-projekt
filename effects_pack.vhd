@@ -13,6 +13,9 @@ PACKAGE effects_pack IS
 	-- Vycet smerov pre posuv obrazu
 	TYPE DIRECTION_T IS (DIR_LEFT, DIR_RIGHT, DIR_TOP);
 
+	-- Typ pre maticovy displej
+	TYPE MATRIX_T IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+
 	-- Funkcia GETCOLUMN vracia stlpec dlzky ROWS z 2D matice, ktoru reprezentuje DATA
 	-- COLID vybera ktory stlpec vratit, indexovany od vrchu (0 to ROWS*COLS-1)
 	-- Pokial je COLID vacsie ako maximalny pocet stlpcov, vracia prvy stlpec
@@ -67,7 +70,7 @@ PACKAGE BODY effects_pack IS
 		-- Vypocet logaritmu
 		LG := LOG2(REAL(DATA));
 
-		-- Ak je logaritmus cele cislo, parameter už je mocnina 2
+		-- Ak je logaritmus cele cislo, parameter uz je mocnina 2
 		IF LG = REAL(NATURAL(LG)) THEN
 			RETURN DATA;
 		END IF;
