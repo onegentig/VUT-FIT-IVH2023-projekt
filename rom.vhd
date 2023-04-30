@@ -1,0 +1,24 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_unsigned.ALL;
+
+LIBRARY work;
+USE work.effects_pack.ALL;
+
+ENTITY rom IS
+	PORT (
+		ADDR : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+		DATA : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+	);
+END ENTITY rom;
+
+ARCHITECTURE behavioral OF rom IS
+	CONSTANT rom_arr : MATRIX_T := (
+		"01011100", "00111010", "00011100", "01111011",
+		"11011110", "10111010", "10011100", "11111011",
+		"11101110", "11011101", "10011110", "11110111",
+		"01111011", "10111011", "01011110", "01110111"
+	);
+BEGIN
+	DATA <= rom_arr(conv_integer(ADDR));
+END ARCHITECTURE;
