@@ -34,14 +34,10 @@ ARCHITECTURE behavior OF column_tb IS
 	-- Stavy stlpcov
 	SIGNAL NEIGH_L  : MATRIX_T;
 	SIGNAL NEIGH_R  : MATRIX_T;
-	SIGNAL STAT_COL : MATRIX_T := (
-	(OTHERS => '0'),
-		(OTHERS => '0'),
-		(OTHERS => '0')
-	);
+	SIGNAL STAT_COL : MATRIX_T := (OTHERS => (OTHERS => '0'));
 
 	-- Vlajka pre koniec testu
-	SIGNAL DONE : BOOLEAN := FALSE;
+	SIGNAL DONE     : BOOLEAN  := FALSE;
 BEGIN
 	-- Instanciacia troch susednych stlpcov
 	COLUMN_MAP : FOR i IN 0 TO 2 GENERATE

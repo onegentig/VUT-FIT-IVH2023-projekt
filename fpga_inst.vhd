@@ -22,6 +22,7 @@ ARCHITECTURE behavioral OF tlv_gp_ifc IS
 	SIGNAL RST         : STD_LOGIC                     := '0';
 
 	SIGNAL DIRECTION_i : DIRECTION_T;
+	SIGNAL COL_RST     : STD_LOGIC                     := '1';
 	SIGNAL CNT_REFRESH : STD_LOGIC_VECTOR(7 DOWNTO 0); -- Citac pre obnovu displeja
 	SIGNAL CNT_ANIM    : STD_LOGIC_VECTOR(7 DOWNTO 0); -- Citac pre ovladanie animacie
 	SIGNAL STAT_INIT   : MATRIX_T := (OTHERS => (OTHERS => '0'));
@@ -43,7 +44,7 @@ BEGIN
 				IF CNT = "111111111111111111111111" THEN
 					CNT <= (OTHERS => '0');
 				ELSE
-					CNT <= CNT + "000000000010000000000000";
+					CNT <= CNT + "000000000000000100000000";
 				END IF;
 			ELSE
 				CNT <= CNT + 1;
@@ -63,7 +64,8 @@ BEGIN
 			CLK       => CLK,
 			CNT_ANIM  => CNT_ANIM,
 			DIRECTION => DIRECTION_i,
-			EN        => EN
+			EN        => EN,
+			RST       => COL_RST
 		);
 
 	-- -----------------------
@@ -73,7 +75,7 @@ BEGIN
 		column_inst : ENTITY work.column
 			PORT MAP(
 				CLK         => CLK,
-				RESET       => RST,
+				RESET       => COL_RST,
 				STATE       => STAT_COL(i),
 				INIT_STATE  => STAT_INIT(i),
 				NEIGH_LEFT  => NEIGH_L(i),
