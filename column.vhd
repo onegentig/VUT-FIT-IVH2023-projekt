@@ -36,10 +36,10 @@ BEGIN
 		ELSIF rising_edge(CLK) AND (EN = '1') THEN
 			IF (DIRECTION = DIR_LEFT) THEN
 				----- Posun vlavo -----
-				STATE <= NEIGH_LEFT;
+				STATE <= NEIGH_RIGHT;
 			ELSIF (DIRECTION = DIR_RIGHT) THEN
 				----- Posun vpravo -----
-				STATE <= NEIGH_RIGHT;
+				STATE <= NEIGH_LEFT;
 			ELSIF (DIRECTION = DIR_TOP) THEN
 				----- Shift nahor -----
 				STATE(N - 1 DOWNTO 1) <= STATE(N - 2 DOWNTO 0);

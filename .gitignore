@@ -22,5 +22,7 @@
 
 # Konečná úloha - implementácia
 !column.vhd
+!column_tb.vhd
 !fsm.vhd
+!fsm_tb.vhd
 !rom.vhd

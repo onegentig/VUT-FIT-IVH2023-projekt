@@ -4,9 +4,9 @@
 
 🔒 **Aktívny súkromný repozitár — nezverejňovať!**
 
-Celkové odnotenie: ?? / 90<br>（?）
+Celkové hodnotenie: ?? / 90<br>（?）
 
-Zadanie: [ZADANI.pdf](ZADANI.pdf), originál [MOODLE PDF](https://moodle.vut.cz/pluginfile.php/569728/mod_resource/content/0/Projekt%202023%20Sv%C4%9Bteln%C3%A9%20efekty%20na%20FPGA%20a%20FITkitu.pdf) & [MOODLE PREZ](https://moodle.vut.cz/pluginfile.php/569729/mod_resource/content/0/04-projekt-efekty.pdf)
+Zadanie: [ZADANI.md](ZADANI.md), originál [MOODLE PDF](https://moodle.vut.cz/pluginfile.php/569728/mod_resource/content/0/Projekt%202023%20Sv%C4%9Bteln%C3%A9%20efekty%20na%20FPGA%20a%20FITkitu.pdf) & [MOODLE PREZ](https://moodle.vut.cz/pluginfile.php/569729/mod_resource/content/0/04-projekt-efekty.pdf)
 
 ----------------------------------------------
 
