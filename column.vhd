@@ -44,6 +44,11 @@ BEGIN
 				----- Shift nahor -----
 				STATE(N - 1 DOWNTO 1) <= STATE(N - 2 DOWNTO 0);
 				STATE(0)              <= '0';
+			ELSIF (DIRECTION = DIR_TOP_BOTTOM) THEN
+				----- Ripple efekt -----
+				STATE(N - 1 DOWNTO (N / 2) + 1) <= STATE(N - 2 DOWNTO (N / 2));
+				STATE((N / 2) - 1 DOWNTO 0)     <= STATE((N / 2) DOWNTO 1);
+				STATE((N / 2))                  <= '0';
 			END IF;
 		END IF;
 	END PROCESS;

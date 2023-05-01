@@ -47,7 +47,7 @@ BEGIN
 						CNT_STEP <= 0;
 					END IF;
 
-					IF CNT_ROT = 3 THEN
+					IF (CNT_ROT = 3) THEN
 						CNT_ROT  <= 0;
 						CNT_STEP <= 0;
 						COL_EN   <= '0';
@@ -71,22 +71,30 @@ BEGIN
 						COL_EN   <= '0';
 						COL_RST  <= '1';
 						pstate   <= ROLL_UP;
+					ELSE
+						COL_RST <= '0';
 					END IF;
 
 				WHEN ROLL_UP =>
 					DIRECTION <= DIR_TOP;
 
-					IF (CNT_STEP = 8 - 1) THEN
-						COL_RST <= '1';
-						pstate  <= OWN_ANIM;
+					IF (CNT_STEP = 8) THEN
+						CNT_ROT  <= 0;
+						CNT_STEP <= 0;
+						COL_EN   <= '0';
+						COL_RST  <= '1';
+						pstate   <= RIPPLE;
 					ELSE
 						COL_RST <= '0';
 					END IF;
 
-				WHEN OWN_ANIM =>
-					-- TODO
-					COL_RST <= '1';
-					COL_EN  <= '0';
+				WHEN RIPPLE =>
+					DIRECTION <= DIR_TOP_BOTTOM;
+					COL_RST   <= '0';
+
+					IF (CNT_STEP = (8 / 2) + 1) THEN
+						COL_EN <= '0';
+					END IF;
 			END CASE;
 		ELSE
 			COL_EN <= '0';
