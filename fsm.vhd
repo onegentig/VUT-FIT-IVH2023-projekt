@@ -1,11 +1,10 @@
--- Stavova logika
+-- Stavova logika projektu
 -- @author Onegen Something <xonege99@vutbr.cz>
 -- @date 2023-04-22
 --
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
 
 LIBRARY work;
 USE work.effects_pack.ALL;
@@ -13,10 +12,11 @@ USE work.effects_pack.ALL;
 ENTITY fsm IS
 	PORT (
 		CLK       : IN STD_LOGIC;
-		CNT_ANIM  : IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		EN        : IN STD_LOGIC;
+		RST       : IN STD_LOGIC;
 		DIRECTION : OUT DIRECTION_T;
-		EN        : OUT STD_LOGIC := '0';
-		RST       : OUT STD_LOGIC := '1'
+		COL_EN    : OUT STD_LOGIC := '0';
+		COL_RST   : OUT STD_LOGIC := '1'
 	);
 END ENTITY fsm;
 
@@ -28,74 +28,68 @@ ARCHITECTURE behavioral OF fsm IS
 BEGIN
 	state_logic : PROCESS (CLK) IS
 	BEGIN
-		IF rising_edge(CLK) THEN
-			IF CNT_ANIM = "00000000" THEN
-				CNT_STEP <= CNT_STEP + 1;
-			END IF;
+		IF RST = '1' THEN
+			pstate   <= RIGHT_ROTATION;
+			CNT_ROT  <= 0;
+			CNT_STEP <= 0;
+			COL_EN   <= '0';
+			COL_RST  <= '1';
+		ELSIF rising_edge(CLK) AND EN = '1' THEN
+			CNT_STEP <= CNT_STEP + 1;
+			COL_EN   <= '1';
 
 			CASE pstate IS
 				WHEN RIGHT_ROTATION =>
 					DIRECTION <= DIR_RIGHT;
 
-					IF CNT_ANIM = "10000000" THEN
-						EN <= '1';
-					ELSE
-						EN <= '0';
-					END IF;
-
-					IF CNT_STEP = 16 THEN
-						CNT_STEP <= 0;
+					IF (CNT_STEP = 16 - 1) THEN
 						CNT_ROT  <= CNT_ROT + 1;
+						CNT_STEP <= 0;
 					END IF;
 
 					IF CNT_ROT = 3 THEN
-						RST     <= '1';
-						CNT_ROT <= 0;
-						pstate  <= LEFT_ROTATION;
+						CNT_ROT  <= 0;
+						CNT_STEP <= 0;
+						COL_EN   <= '0';
+						COL_RST  <= '1';
+						pstate   <= LEFT_ROTATION;
 					ELSE
-						RST <= '0';
+						COL_RST <= '0';
 					END IF;
 
 				WHEN LEFT_ROTATION =>
 					DIRECTION <= DIR_LEFT;
 
-					IF CNT_ANIM = "10000000" THEN
-						EN <= '1';
-					ELSE
-						EN <= '0';
-					END IF;
-
-					IF CNT_STEP = 16 THEN
-						CNT_STEP <= 0;
+					IF (CNT_STEP = 16 - 1) THEN
 						CNT_ROT  <= CNT_ROT + 1;
+						CNT_STEP <= 0;
 					END IF;
 
-					IF CNT_ROT = 3 THEN
-						RST     <= '1';
-						CNT_ROT <= 0;
-						pstate  <= ROLL_UP;
+					IF (CNT_ROT = 3) THEN
+						CNT_ROT  <= 0;
+						CNT_STEP <= 0;
+						COL_EN   <= '0';
+						COL_RST  <= '1';
+						pstate   <= ROLL_UP;
 					END IF;
 
 				WHEN ROLL_UP =>
 					DIRECTION <= DIR_TOP;
 
-					IF CNT_ANIM = "10000000" THEN
-						EN <= '1';
+					IF (CNT_STEP = 8 - 1) THEN
+						COL_RST <= '1';
+						pstate  <= OWN_ANIM;
 					ELSE
-						EN <= '0';
-					END IF;
-
-					IF CNT_STEP = 8 THEN
-						RST    <= '1';
-						pstate <= OWN_ANIM;
-					ELSE
-						RST <= '0';
+						COL_RST <= '0';
 					END IF;
 
 				WHEN OWN_ANIM =>
 					-- TODO
-					EN <= '0';
+					COL_RST <= '1';
+					COL_EN  <= '0';
 			END CASE;
+		ELSE
+			COL_EN <= '0';
 		END IF;
 	END PROCESS;
 END ARCHITECTURE behavioral;
