@@ -113,7 +113,15 @@ BEGIN
 		ASSERT (COL_EN = '0') AND (COL_RST = '1')
 		REPORT "FAIL! Chybny reset alebo povolovac po pohybe nahor" SEVERITY ERROR;
 
-		-- TODO: OWN_ANIM
+		-- Ripple (vlastna animacia)
+		FOR i IN 1 TO 5 LOOP
+			WAIT FOR CLK_period;
+			ASSERT DIRECTION = DIR_TOP_BOTTOM
+			REPORT "FAIL! Neocakavany stav pri obojsmernom posuve" SEVERITY ERROR;
+			IF (DIRECTION /= DIR_TOP_BOTTOM) THEN
+				fail_all := TRUE;
+			END IF;
+		END LOOP;
 
 		ASSERT fail_all = TRUE REPORT "PASS! Spravny pohyb stavov" SEVERITY NOTE;
 
