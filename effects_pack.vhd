@@ -11,12 +11,12 @@ USE ieee.math_real.ALL;
 PACKAGE effects_pack IS
 
 	-- Vycet smerov pre posuv obrazu
-	TYPE DIRECTION_T IS (DIR_LEFT, DIR_RIGHT, DIR_TOP);
+	TYPE DIRECTION_T IS (DIR_RIGHT, DIR_LEFT, DIR_TOP);
 
 	-- Typ pre maticovy displej
 	TYPE MATRIX_T IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-	-- Typ pre stavy FSM
+	-- Vycet pre stavy FSM
 	TYPE STATE_T IS (RIGHT_ROTATION, LEFT_ROTATION, ROLL_UP, OWN_ANIM);
 
 	-- Funkcia GETCOLUMN vracia stlpec dlzky ROWS z 2D matice, ktoru reprezentuje DATA
