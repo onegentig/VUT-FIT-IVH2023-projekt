@@ -24,7 +24,7 @@ ARCHITECTURE behavior OF counter_tb IS
 	CONSTANT CLK_period : TIME    := 10 ns;
 
 	-- Vlajka pre koniec testu
-	SIGNAL done         : BOOLEAN := FALSE;
+	SIGNAL DONE         : BOOLEAN := FALSE;
 
 	-- Prevod boolean na std_logic pre ASSERT
 	FUNCTION b2sl (b    : BOOLEAN) RETURN STD_LOGIC IS BEGIN
@@ -35,16 +35,15 @@ ARCHITECTURE behavior OF counter_tb IS
 		END IF;
 	END FUNCTION;
 BEGIN
-
 	-- Instaciacia jednotky pod testom (UUT)
 	--    Pocitejte s tim, ze pri zkouseni pobezi testbench 100 ms
 	uut : ENTITY work.counter
-		GENERIC MAP (
+		GENERIC MAP(
 			OUT1_PERIOD => 2,
 			OUT2_PERIOD => 3,
 			OUT3_PERIOD => 5
 		)
-		PORT MAP (
+		PORT MAP(
 			CLK   => CLK,
 			RESET => RESET,
 			EN1   => EN1,
@@ -54,7 +53,7 @@ BEGIN
 
 	-- Hodinovy proces
 	CLK_process : PROCESS BEGIN
-		IF done = TRUE THEN
+		IF DONE = TRUE THEN
 			WAIT;
 		END IF;
 
@@ -119,7 +118,7 @@ BEGIN
 				AND (EN2 = '0')
 				AND (EN3 = '0');
 			ASSERT passed_now = TRUE REPORT "FAIL! Nefunkcny reset v CLK "
-				& INTEGER'image(clk_i) SEVERITY ERROR;
+			& INTEGER'image(clk_i) SEVERITY ERROR;
 
 			IF passed_now = TRUE THEN
 				cnt_pass := cnt_pass + 1;

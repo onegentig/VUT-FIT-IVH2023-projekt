@@ -26,7 +26,4 @@ Zadanie: [ZADANI.md](ZADANI.md), originál [MOODLE PDF](https://moodle.vut.cz/pl
 
 ----------------------------------------------
 
-## Môže sa hodiť ###
-
-- [VHDL Cheatsheet](https://github.com/ismailelbadawy/vhdl-cheat-sheet)
-- [Xilinx ISE na Arch Wiki](https://wiki.archlinux.org/title/Xilinx_ISE_WebPACK) *(deps, tweaks)*
+<div align="center"><a href="https://wakatime.com"><img alt="wakatime" src="https://wakatime.com/badge/user/dd421270-8f1c-43aa-aa5b-ec52a2a18852/project/335c37c4-365b-47da-84b2-4a340703fd54.svg?style=for-the-badge" /></a></div>
