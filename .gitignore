@@ -13,16 +13,11 @@
 !counter.vhd
 !counter_tb.vhd
 
-# Konečná úloha - kostra (read-only)
-!fpga.vhd
+# Konečná úloha
 !fpga_inst.vhd
-!tlv_gp_ifc.vhd
-!clkgen.vhd
-!clkgen_config.vhd
-
-# Konečná úloha - implementácia
 !column.vhd
-!column_tb.vhd
 !fsm.vhd
-!fsm_tb.vhd
 !rom.vhd
+!column_tb.vhd
+!fsm_tb.vhd
+!rom_tb.vhd

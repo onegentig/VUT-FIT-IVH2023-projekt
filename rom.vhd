@@ -1,6 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
+USE ieee.numeric_std.ALL;
 
 LIBRARY work;
 USE work.effects_pack.ALL;
@@ -20,5 +20,5 @@ ARCHITECTURE behavioral OF rom IS
 		"01111011", "10111011", "01011110", "01110111"
 	);
 BEGIN
-	DATA <= rom_arr(conv_integer(ADDR));
+	DATA <= rom_arr(to_integer(unsigned(ADDR)));
 END ARCHITECTURE;
