@@ -1,72 +1,51 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-LIBRARY work;
-USE work.effects_pack.ALL;
+library work;
+use work.effects_pack.all;
 
-ARCHITECTURE behavioral OF tlv_gp_ifc IS
-	-- @constant {INTEGER} INIT_FREQ
-	-- Zakladna frekvencia pre beh, pre FITKit 25MHz, mensia pre simulaciu.
-	CONSTANT INIT_FREQ : INTEGER  := 25; -- pre beh
-	--CONSTANT INIT_FREQ : INTEGER := 5; -- pre simulaciu
+architecture behavioral of tlv_gp_ifc is
+	-- @constant {INTEGER} SPEED
+	-- Dlzka periody medzi krokmi animacie (2^SPEED = pocet hodinovych cyklov medzi krokmi)
+	constant SPEED : integer := 22;                                        -- pre beh
+	--constant INIT_FREQ : integer := 5;                                   -- pre simulaciu
 
-	-- @constant {POSITIVE} WIDTH
-	-- @constant {POSITIVE} HEIGHT
 	-- Rozmery maticoveho displeja.
-	CONSTANT WIDTH     : POSITIVE := 16;
-	CONSTANT HEIGHT    : POSITIVE := 8;
+	constant WIDTH  : positive := 16;
+	constant HEIGHT : positive := 8;
 
 	-- Stavy displeja
-	SIGNAL STAT_INIT   : MATRIX_T := (OTHERS => (OTHERS => '0'));             -- Pociatocny stav displeja
-	SIGNAL STAT_COL    : MATRIX_T := STAT_INIT;                               -- Stavy stlpcov
-	SIGNAL NEIGH_L     : MATRIX_T;                                            -- Lave susedne stlpce
-	SIGNAL NEIGH_R     : MATRIX_T;                                            -- Prave susedne stlpce
+	signal STAT_INIT : MATRIX_T := (others => (others => '0'));             -- Pociatocny stav displeja
+	signal STAT_COL  : MATRIX_T := STAT_INIT;                               -- Stavy stlpcov
+	signal NEIGH_L   : MATRIX_T;                                            -- Lave susedne stlpce
+	signal NEIGH_R   : MATRIX_T;                                            -- Prave susedne stlpce
 
 	-- Ovladanie stlpcov
-	SIGNAL CLK_ANIM    : STD_LOGIC := '0';                                    -- Hodiny pre ovladanie animacie
-	SIGNAL COL_EN      : STD_LOGIC := '0';                                    -- Povolovaci signal stlpcov
-	SIGNAL COL_RST     : STD_LOGIC := '0';                                    -- Reset stplcov na INIT_STATE
-	SIGNAL DIRECTION   : DIRECTION_T;                                         -- Smer animacie
+	signal CLK_ANIM  : std_logic := '0';                                    -- Hodiny pre ovladanie animacie
+	signal COL_EN    : std_logic := '0';                                    -- Povolovaci signal stlpcov
+	signal COL_RST   : std_logic := '0';                                    -- Reset stplcov na INIT_STATE
+	signal DIRECTION : DIRECTION_T;                                         -- Smer animacie
 
 	-- Ovladanie maticoveho displeja
-	SIGNAL CLK_REFR    : STD_LOGIC                             := '0';        -- Spomalene hodiny pre obnovu displeja
-	SIGNAL A           : STD_LOGIC_VECTOR(3 DOWNTO 0)          := "0000";     -- Adresa stlpca
-	SIGNAL R           : STD_LOGIC_VECTOR(HEIGHT - 1 DOWNTO 0) := "01011100"; -- Stav stlpca
+	signal CLK_REFR : std_logic                             := '0';         -- Spomalene hodiny pre obnovu displeja
+	signal A        : std_logic_vector(3 downto 0)          := "0000";      -- Adresa stlpca
+	signal R        : std_logic_vector(HEIGHT - 1 downto 0) := "00000000";  -- Stav stlpca
 
 	-- ROM
-	SIGNAL ROM_OUT     : STD_LOGIC_VECTOR(HEIGHT - 1 DOWNTO 0);
-
-	--CONSTANT INIT_FREQ : INTEGER := 25000000; -- pre beh
-	--CONSTANT INIT_FREQ : INTEGER := 25; -- pre  simulaciu
-	--SUBTYPE CNT_T IS INTEGER RANGE 0 TO INIT_FREQ;
-	--CONSTANT INIT_FREQ : INTEGER := (IF SIMULATION THEN 5 ELSE 24);
-	--SIGNAL CNT         : STD_LOGIC_VECTOR(INIT_FREQ - 1 DOWNTO 0) := (OTHERS => '0');
-
-	--SIGNAL EN          : STD_LOGIC                     := '1';
-	--SIGNAL CNT         : STD_LOGIC_VECTOR(23 DOWNTO 0) := (OTHERS => '0'); -- 1s - 25MHz / 20M ~ 24b
-	--SIGNAL RST         : STD_LOGIC                     := '0';
-
-	--SIGNAL DIRECTION_i : DIRECTION_T;
-	--SIGNAL COL_RST     : STD_LOGIC                     := '1';
-	--SIGNAL CNT_REFRESH : STD_LOGIC_VECTOR(7 DOWNTO 0); -- Citac pre obnovu displeja
-	--SIGNAL CNT_ANIM    : STD_LOGIC_VECTOR(7 DOWNTO 0); -- Citac pre ovladanie animacie
-	--SIGNAL STAT_INIT   : MATRIX_T := (OTHERS => (OTHERS => '0'));
-	--SIGNAL STAT_COL    : MATRIX_T := STAT_INIT;
-	--SIGNAL NEIGH_L     : MATRIX_T;
-	--SIGNAL NEIGH_R     : MATRIX_T;
-	--SIGNAL ROM_OUT     : STD_LOGIC_VECTOR(7 DOWNTO 0);
-BEGIN
+	signal ROM_ADDR : std_logic_vector(1 downto 0) := "00";                 -- Adresa ROM
+	signal ROM_OUT  : std_logic_vector(WIDTH * HEIGHT - 1 downto 0);        -- Vystup z ROM
+begin
 	-- -----------------------
 	--        Citace
 	-- -----------------------
-	counters : ENTITY work.counter
-		GENERIC MAP(
-			OUT1_PERIOD => 2,              -- Pre prepinanie stplcov
-			OUT2_PERIOD => 2 ** INIT_FREQ, -- Pre koordinaciu animacie
+	counters : entity work.counter
+		generic map(
+			OUT1_PERIOD => 2,               -- Pre prepinanie stplcov
+			OUT2_PERIOD => 2 ** SPEED,      -- Pre koordinaciu animacie
 			OUT3_PERIOD => 1
 		)
-		PORT MAP(
+		port map(
 			CLK   => CLK,
 			RESET => RESET,
 			EN1   => CLK_REFR,
@@ -76,8 +55,8 @@ BEGIN
 	-- -----------------------
 	--    Stavovy automat
 	-- -----------------------
-	fsm : ENTITY work.fsm
-		PORT MAP(
+	fsm : entity work.fsm
+		port map(
 			CLK       => CLK_ANIM,
 			EN        => '1',
 			RST       => '0',
@@ -89,54 +68,69 @@ BEGIN
 	-- -----------------------
 	--         ROM
 	-- -----------------------
-	rom : ENTITY work.rom
-		PORT MAP(
-			ADDR => A,
+	rom : entity work.rom
+		port map(
+			ADDR => ROM_ADDR,
 			DATA => ROM_OUT
 		);
-	STAT_INIT(to_integer(unsigned(A))) <= ROM_OUT;
 
 	-- -----------------------
 	--        Stlpce
 	-- -----------------------
-	COLUMN_MAP : FOR i IN 0 TO WIDTH - 1 GENERATE
-		column_inst : ENTITY work.column
-			GENERIC MAP(
+	COLUMN_MAP : for i in 0 to WIDTH - 1 generate
+		subtype COLIDX_T is integer range 0 to WIDTH - 1;
+		constant COLIDX   : COLIDX_T := COLIDX_T(i);
+		constant COLIDX_L : COLIDX_T := COLIDX_T((COLIDX - 1) mod WIDTH);
+		constant COLIDX_R : COLIDX_T := COLIDX_T((COLIDX + 1) mod WIDTH);
+
+		signal COL_NOW : std_logic_vector(HEIGHT - 1 downto 0);
+	begin
+		STAT_INIT(COLIDX) <= GETCOLUMN(ROM_OUT, COLIDX, HEIGHT);
+
+		column_inst : entity work.column
+			generic map(
 				N => HEIGHT
 			)
-			PORT MAP(
+			port map(
 				CLK         => CLK_ANIM,
 				RESET       => COL_RST,
-				STATE       => STAT_COL(i),
-				INIT_STATE  => ROM_OUT,
-				NEIGH_LEFT  => NEIGH_L(i),
-				NEIGH_RIGHT => NEIGH_R(i),
+				STATE       => COL_NOW,
+				INIT_STATE  => STAT_INIT(COLIDX),
+				NEIGH_LEFT  => NEIGH_L(COLIDX),
+				NEIGH_RIGHT => NEIGH_R(COLIDX),
 				DIRECTION   => DIRECTION,
 				EN          => COL_EN
 			);
-	END GENERATE;
+
+		STAT_COL(COLIDX)  <= COL_NOW;
+		NEIGH_L(COLIDX_R) <= COL_NOW;
+		NEIGH_R(COLIDX_L) <= COL_NOW;
+	end generate;
 
 	-- Prepojenie susedov
 	NEIGH_L(0)         <= STAT_COL(WIDTH - 1);
 	NEIGH_R(WIDTH - 1) <= STAT_COL(0);
 
-	NEIGH_L_MAP : FOR i IN 1 TO WIDTH - 1 GENERATE
+	NEIGH_L_MAP : for i in 1 to WIDTH - 1 generate
 		NEIGH_L(i) <= STAT_COL(i - 1);
-	END GENERATE;
+	end generate;
 
-	NEIGH_R_MAP : FOR i IN 0 TO WIDTH - 2 GENERATE
+	NEIGH_R_MAP : for i in 0 to WIDTH - 2 generate
 		NEIGH_R(i) <= STAT_COL(i + 1);
-	END GENERATE;
+	end generate;
 
 	-- -----------------------
 	--   Ovladanie displeja
 	-- -----------------------
-	p_display : PROCESS (CLK_REFR) BEGIN
-		IF rising_edge(CLK_REFR) THEN
-			A <= STD_LOGIC_VECTOR(unsigned(A) + 1);
-			R <= STAT_COL(to_integer(unsigned(A)));
-		END IF;
-	END PROCESS;
+	R <= STAT_COL(to_integer(unsigned(A)));
+
+	-- Prepinanie stlpcov
+	p_addr : process (CLK_REFR)
+	begin
+		if rising_edge(CLK_REFR) then
+			A <= std_logic_vector(unsigned(A) + 1);
+		end if;
+	end process;
 
 	-- Mapovanie vystupu
 	X(6)  <= A(3);
@@ -152,4 +146,4 @@ BEGIN
 	X(19) <= R(3);
 	X(21) <= R(6);
 	X(23) <= R(5);
-END behavioral;
+end behavioral;
