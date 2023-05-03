@@ -22,7 +22,7 @@ architecture behavioral of tlv_gp_ifc is
 
 	-- Stavy displeja
 	signal STAT_INIT : MATRIX_T := (others => (others => '0'));             -- Pociatocny stav displeja
-	signal STAT_COL  : MATRIX_T := STAT_INIT;                               -- Stavy stlpcov
+	signal STAT_COL  : MATRIX_T;                                            -- Stavy stlpcov
 	signal NEIGH_L   : MATRIX_T;                                            -- Lave susedne stlpce
 	signal NEIGH_R   : MATRIX_T;                                            -- Prave susedne stlpce
 

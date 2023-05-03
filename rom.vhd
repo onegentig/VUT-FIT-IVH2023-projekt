@@ -15,7 +15,7 @@ entity rom is
 end entity rom;
 
 architecture behavioral of rom is
-	type ROM_T is array (0 to 1) of std_logic_vector(0 to 127);
+	type ROM_T is array (0 to 1) of std_logic_vector(127 downto 0);
 	-- Kazdy 128-bitovy vektor reprezentuje 16 stlpcov 8-riadkovej matice.
 	-- Obrazky su ulozene po stlpcoch (column-major order), v konkatenovanom
 	-- zapise nizsie v poradi zprava-dolava, zdola-nahor.
