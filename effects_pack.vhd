@@ -14,7 +14,7 @@ package effects_pack is
 	type DIRECTION_T is (DIR_RIGHT, DIR_LEFT, DIR_TOP, DIR_TOP_BOTTOM, DIR_NEGATE);  -- DIR_TOP_BOTTOM a DIR_NEGATE su vlastne efekty
 
 	-- Vycet pre stavy FSM
-	type STATE_T is (RIGHT_ROTATION, LEFT_ROTATION, ROLL_UP, RIPPLE);  -- RIPPLE je vlastny efekt
+	type STATE_T is (RIGHT_ROTATION, LEFT_ROTATION, ROLL_UP, CHECKERBOARD, RIPPLE);  -- CHECKERBOARD a RIPPLE su vlastne efekty
 
 	-- Typ pre maticovy displej
 	type MATRIX_T is array (0 to 15) of std_logic_vector(7 downto 0);
