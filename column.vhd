@@ -49,6 +49,9 @@ begin
 				STATE(N - 1 downto (N / 2) + 1) <= STATE(N - 2 downto (N / 2));
 				STATE((N / 2) - 1 downto 0)     <= STATE((N / 2) downto 1);
 				STATE((N / 2))                  <= '0';
+			elsif (DIRECTION = DIR_NEGATE) then
+				----- Negacia -----
+				STATE <= not STATE;
 			end if;
 		end if;
 	end process;

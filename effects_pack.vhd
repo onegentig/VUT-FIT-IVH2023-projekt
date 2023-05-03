@@ -3,82 +3,82 @@
 -- @date 2023-03-09
 --
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
-USE ieee.math_real.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.math_real.all;
 
-PACKAGE effects_pack IS
+package effects_pack is
 
 	-- Vycet smerov pre posuv obrazu
-	TYPE DIRECTION_T IS (DIR_RIGHT, DIR_LEFT, DIR_TOP, DIR_TOP_BOTTOM); -- DIR_TOP_BOTTOM je vlastny efekt
+	type DIRECTION_T is (DIR_RIGHT, DIR_LEFT, DIR_TOP, DIR_TOP_BOTTOM, DIR_NEGATE);  -- DIR_TOP_BOTTOM a DIR_NEGATE su vlastne efekty
 
 	-- Vycet pre stavy FSM
-	TYPE STATE_T IS (RIGHT_ROTATION, LEFT_ROTATION, ROLL_UP, RIPPLE);   -- RIPPLE je vlastny efekt
+	type STATE_T is (RIGHT_ROTATION, LEFT_ROTATION, ROLL_UP, RIPPLE);  -- RIPPLE je vlastny efekt
 
 	-- Typ pre maticovy displej
-	TYPE MATRIX_T IS ARRAY (0 TO 15) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+	type MATRIX_T is array (0 to 15) of std_logic_vector(7 downto 0);
 
 	-- Funkcia GETCOLUMN vracia stlpec dlzky ROWS z 2D matice, ktoru reprezentuje DATA
 	-- COLID vybera ktory stlpec vratit, indexovany od vrchu (0 to ROWS*COLS-1)
 	-- Pokial je COLID vacsie ako maximalny pocet stlpcov, vracia prvy stlpec
 	-- Pokial je COLID mensie ako 0, vracia posledny stlpec
 	-- Vracia 'X' v pripade chyby
-	FUNCTION GETCOLUMN (SIGNAL DATA : IN STD_LOGIC_VECTOR; COLID : IN INTEGER; ROWS : IN INTEGER) RETURN STD_LOGIC_VECTOR;
+	function GETCOLUMN (signal DATA : in std_logic_vector; COLID : in integer; ROWS : in integer) return std_logic_vector;
 
 	-- Funkcia NEAREST2N vracia najblizsiu mocninu dvojky pre cislo DATA
 	-- Pokial DATA uz je mocnina dvojky, vracia DATA
-	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL;
+	function NEAREST2N (DATA : in natural) return natural;
 
-END effects_pack;
+end effects_pack;
 
-PACKAGE BODY effects_pack IS
+package body effects_pack is
 
-	FUNCTION GETCOLUMN (SIGNAL DATA : IN STD_LOGIC_VECTOR; COLID : IN INTEGER; ROWS : IN INTEGER) RETURN STD_LOGIC_VECTOR IS
-		VARIABLE COLS : INTEGER;
-		VARIABLE I    : INTEGER;
-	BEGIN
+	function GETCOLUMN (signal DATA : in std_logic_vector; COLID : in integer; ROWS : in integer) return std_logic_vector is
+		variable COLS : integer;
+		variable I    : integer;
+	begin
 		-- DATA nemoze byt prazdny a ROWS musi byt vacsi ako 0
-		IF DATA'LENGTH = 0 OR ROWS <= 0 THEN
-			RETURN "X";
-		END IF;
+		if DATA'length = 0 or ROWS <= 0 then
+			return "X";
+		end if;
 
 		-- Pocet stlpcov
-		COLS := DATA'LENGTH / ROWS;
+		COLS := DATA'length / ROWS;
 
-		IF COLID >= COLS THEN
+		if COLID >= COLS then
 			-- COLID mimo rozsah  -> prvy stlpec
 			I := 0;
-		ELSIF COLID < 0 THEN
+		elsif COLID < 0 then
 			-- COLID mensie ako 0 -> posledny stlpec
 			I := COLS - 1;
-		ELSE
+		else
 			-- COLID v rozsahu
 			I := COLID;
-		END IF;
+		end if;
 
 		-- Navrat stlpca z matice
-		RETURN DATA((ROWS * I) + (ROWS - 1) DOWNTO I * ROWS);
-	END FUNCTION;
+		return DATA((ROWS * I) + (ROWS - 1) downto I * ROWS);
+	end function;
 
-	FUNCTION NEAREST2N (DATA : IN NATURAL) RETURN NATURAL IS
-		VARIABLE LG              : REAL; -- LOG2(N)
-	BEGIN
+	function NEAREST2N (DATA : in natural) return natural is
+		variable LG : real;           -- LOG2(N)
+	begin
 		-- DATA nemoze byt mensie alebo rovne 0
 		--   D(log2) = (0, inf>
-		IF DATA <= 0 THEN
-			RETURN 1;
-		END IF;
+		if DATA <= 0 then
+			return 1;
+		end if;
 
 		-- Vypocet logaritmu
-		LG := LOG2(REAL(DATA));
+		LG := LOG2(real(DATA));
 
 		-- Ak je logaritmus cele cislo, parameter uz je mocnina 2
-		IF LG = REAL(NATURAL(LG)) THEN
-			RETURN DATA;
-		END IF;
+		if LG = real(natural(LG)) then
+			return DATA;
+		end if;
 
-		RETURN 2 ** (NATURAL(FLOOR(LG)) + 1);
-	END FUNCTION;
+		return 2 ** (natural(FLOOR(LG)) + 1);
+	end function;
 
-END effects_pack;
+end effects_pack;

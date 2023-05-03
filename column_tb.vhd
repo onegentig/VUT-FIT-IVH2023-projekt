@@ -181,6 +181,16 @@ begin
 		assert passed = true report "FAIL! Reset" severity error;
 		assert passed = false report "PASS! Reset" severity note;
 
+		-- Negacia (vlastny efekt)
+		DIRECTION <= DIR_NEGATE;
+		wait for CLK_period;
+		assert (STAT_COL(0) = X"55") and (STAT_COL(1) = X"33")
+			and (STAT_COL(2) = X"00") report "FAIL! Negacia #1" severity error;
+
+		wait for CLK_period;
+		assert (STAT_COL(0) = X"AA") and (STAT_COL(1) = X"CC")
+			and (STAT_COL(2) = X"FF") report "FAIL! Negacia #2" severity error;
+
 		-- Ripple (vlastny efekt)
 		DIRECTION <= DIR_TOP_BOTTOM;
 
