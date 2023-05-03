@@ -18,9 +18,10 @@ architecture behavior of fsm_tb is
 	signal RESET : std_logic := '0';
 
 	-- Vystupy
-	signal DIRECTION : DIRECTION_T;
 	signal COL_EN    : std_logic;
 	signal COL_RST   : std_logic;
+	signal DIRECTION : DIRECTION_T;
+	signal IMAGE_IDX : natural;
 
 	-- Hodiny
 	constant CLK_period : time      := 10 ns;
@@ -35,9 +36,10 @@ begin
 			CLK       => CLK,
 			EN        => EN,
 			RST       => RESET,
-			DIRECTION => DIRECTION,
 			COL_EN    => COL_EN,
-			COL_RST   => COL_RST
+			COL_RST   => COL_RST,
+			DIRECTION => DIRECTION,
+			IMAGE_IDX => IMAGE_IDX
 		);
 
 	-- Hodinovy proces
@@ -55,7 +57,6 @@ begin
 
 	-- Stimulus
 	stim_proc : process is
-		variable cnt      : integer := 0;
 		variable fail_all : boolean := false;
 	begin
 		RESET <= '1';
@@ -73,10 +74,11 @@ begin
 
 		-- Posun doprava
 		EN <= '1';
-		for i in 1 to (16 * 3) loop
+		for i_unused in 1 to (16 * 3) loop
 			wait for CLK_period;
 			assert (DIRECTION = DIR_RIGHT) and (COL_EN = '1') and (COL_RST = '0')
-				report "FAIL! Neocakavany stav pri pohybe doprava" severity error;
+				report "FAIL! Neocakavany stav pri RIGHT_ROTATION" severity error;
+			assert (IMAGE_IDX = 0) report "FAIL! Nespravny obrazok pri RIGHT_ROTATION" severity error;
 			if (DIRECTION /= DIR_RIGHT) then
 				fail_all := true;
 			end if;
@@ -84,13 +86,14 @@ begin
 
 		wait for CLK_period;
 		assert (COL_EN = '0') and (COL_RST = '1')
-			report "FAIL! Chybny reset alebo povolovac po pohybe doprava" severity error;
+			report "FAIL! Chybny reset alebo povolovac po RIGHT_ROTATION" severity error;
 
 		-- Posun dolava
-		for i in 1 to (16 * 3) loop
+		for i_unused in 1 to (16 * 3) loop
 			wait for CLK_period;
 			assert DIRECTION = DIR_LEFT
-				report "FAIL! Neocakavany stav pri pohybe dolava" severity error;
+				report "FAIL! Neocakavany stav pri LEFT_ROTATION" severity error;
+			assert (IMAGE_IDX = 0) report "FAIL! Nespravny obrazok pri LEFT_ROTATION" severity error;
 			if (DIRECTION /= DIR_LEFT) then
 				fail_all := true;
 			end if;
@@ -98,13 +101,14 @@ begin
 
 		wait for CLK_period;
 		assert (COL_EN = '0') and (COL_RST = '1')
-			report "FAIL! Chybny reset alebo povolovac po pohybe dolava" severity error;
+			report "FAIL! Chybny reset alebo povolovac po LEFT_ROTATION" severity error;
 
 		-- Posun nahor
-		for i in 1 to 8 loop
+		for i_unused in 1 to 8 loop
 			wait for CLK_period;
 			assert DIRECTION = DIR_TOP
-				report "FAIL! Neocakavany stav pri pohybe nahor" severity error;
+				report "FAIL! Neocakavany stav pri ROLL_UP" severity error;
+			assert (IMAGE_IDX = 0) report "FAIL! Nespravny obrazok pri ROLL_UP" severity error;
 			if (DIRECTION /= DIR_TOP) then
 				fail_all := true;
 			end if;
@@ -112,17 +116,51 @@ begin
 
 		wait for CLK_period;
 		assert (COL_EN = '0') and (COL_RST = '1')
-			report "FAIL! Chybny reset alebo povolovac po pohybe nahor" severity error;
+			report "FAIL! Chybny reset alebo povolovac po ROLL_UP" severity error;
+
+		-- Sachovnica (vlastny efekt)
+		for i in 0 to 19 loop
+			wait for CLK_period;
+			assert DIRECTION = DIR_NEGATE
+				report "FAIL! Neocakavany stav pri CHECKERBOARD" severity error;
+			assert (IMAGE_IDX = 1) report "FAIL! Nespravny obrazok pri CHECKERBOARD" severity error;
+			if i mod 2 = 0 then
+				assert (COL_EN = '1') and (COL_RST = '0')
+					report "FAIL! Chybny povolovac alebo reset pri CHECKERBOARD" severity error;
+			else
+				assert (COL_EN = '0') and (COL_RST = '0')
+					report "FAIL! Chybny povolovac alebo reset pri CHECKERBOARD" severity error;
+			end if;
+			if (DIRECTION /= DIR_NEGATE) then
+				fail_all := true;
+			end if;
+		end loop;
+
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '1')
+			report "FAIL! Chybny reset alebo povolovac po CHECKERBOARD" severity error;
 
 		-- Ripple (vlastna animacia)
-		for i in 1 to 5 loop
+		for i in 0 to 19 loop
 			wait for CLK_period;
 			assert DIRECTION = DIR_TOP_BOTTOM
-				report "FAIL! Neocakavany stav pri obojsmernom posuve" severity error;
+				report "FAIL! Neocakavany stav pri RIPPLE" severity error;
+			assert (IMAGE_IDX = 1) report "FAIL! Nespravny obrazok pri RIPPLE" severity error;
+			if i mod 4 = 0 then
+				assert (COL_EN = '1') and (COL_RST = '0')
+					report "FAIL! Chybny povolovac alebo reset pri RIPPLE" severity error;
+			else
+				assert (COL_EN = '0') and (COL_RST = '0')
+					report "FAIL! Chybny povolovac alebo reset pri RIPPLE" severity error;
+			end if;
 			if (DIRECTION /= DIR_TOP_BOTTOM) then
 				fail_all := true;
 			end if;
 		end loop;
+
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '0')
+			report "FAIL! Chybny reset alebo povolovac po RIPPLE" severity error;
 
 		assert fail_all = true report "PASS! Spravny pohyb stavov" severity note;
 
@@ -134,7 +172,7 @@ begin
 
 		RESET <= '0';
 		wait for CLK_period;
-		assert (COL_EN = '1') and (COL_RST = '0')
+		assert (COL_EN = '1') and (COL_RST = '0') and (IMAGE_IDX = 0)
 			report "FAIL! Chybne EN/RST po FSM resete" severity error;
 
 		assert DIRECTION /= DIR_RIGHT report "PASS! Spravny smer po resete" severity note;

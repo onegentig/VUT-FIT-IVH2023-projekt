@@ -1,3 +1,8 @@
+-- Top-Module IVH projektu 2023
+-- @author Onegen Something <xonege99@vutbr.cz>
+-- @date 2023-05-03
+--
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -8,12 +13,12 @@ use work.effects_pack.all;
 architecture behavioral of tlv_gp_ifc is
 	-- @constant {INTEGER} SPEED
 	-- Dlzka periody medzi krokmi animacie (2^SPEED = pocet hodinovych cyklov medzi krokmi)
-	constant SPEED : integer := 22;                                        -- pre beh
-	--constant INIT_FREQ : integer := 5;                                   -- pre simulaciu
+	constant SPEED   : integer := 22;                                       -- pre beh
+	--constant SPEED   : integer := 5;                                        -- pre simulaciu
 
 	-- Rozmery maticoveho displeja.
-	constant WIDTH  : positive := 16;
-	constant HEIGHT : positive := 8;
+	constant WIDTH   : positive := 16;
+	constant HEIGHT  : positive := 8;
 
 	-- Stavy displeja
 	signal STAT_INIT : MATRIX_T := (others => (others => '0'));             -- Pociatocny stav displeja
@@ -28,22 +33,22 @@ architecture behavioral of tlv_gp_ifc is
 	signal DIRECTION : DIRECTION_T;                                         -- Smer animacie
 
 	-- Ovladanie maticoveho displeja
-	signal CLK_REFR : std_logic                             := '0';         -- Spomalene hodiny pre obnovu displeja
-	signal A        : std_logic_vector(3 downto 0)          := "0000";      -- Adresa stlpca
-	signal R        : std_logic_vector(HEIGHT - 1 downto 0) := "00000000";  -- Stav stlpca
+	signal CLK_REFR  : std_logic                             := '0';        -- Spomalene hodiny pre obnovu displeja
+	signal A         : std_logic_vector(3 downto 0)          := "0000";     -- Adresa stlpca
+	signal R         : std_logic_vector(HEIGHT - 1 downto 0) := "00000000"; -- Stav stlpca
 
 	-- ROM
-	signal ROM_ADDR : std_logic_vector(1 downto 0) := "00";                 -- Adresa ROM
-	signal ROM_OUT  : std_logic_vector(WIDTH * HEIGHT - 1 downto 0);        -- Vystup z ROM
+	signal ROM_IDX   : natural                      := 0;                   -- Index obrazka v ROM
+	signal ROM_ADDR  : std_logic_vector(1 downto 0) := "00";                -- Adresa ROM
+	signal ROM_OUT   : std_logic_vector(WIDTH * HEIGHT - 1 downto 0);       -- Vystup z ROM
 begin
 	-- -----------------------
 	--        Citace
 	-- -----------------------
 	counters : entity work.counter
 		generic map(
-			OUT1_PERIOD => 2,               -- Pre prepinanie stplcov
-			OUT2_PERIOD => 2 ** SPEED,      -- Pre koordinaciu animacie
-			OUT3_PERIOD => 1
+			OUT1_PERIOD => 2,           -- Pre prepinanie stplcov
+			OUT2_PERIOD => 2 ** SPEED   -- Pre koordinaciu animacie
 		)
 		port map(
 			CLK   => CLK,
@@ -60,9 +65,10 @@ begin
 			CLK       => CLK_ANIM,
 			EN        => '1',
 			RST       => '0',
-			DIRECTION => DIRECTION,
 			COL_EN    => COL_EN,
-			COL_RST   => COL_RST
+			COL_RST   => COL_RST,
+			DIRECTION => DIRECTION,
+			IMAGE_IDX => ROM_IDX
 		);
 
 	-- -----------------------
@@ -74,6 +80,8 @@ begin
 			DATA => ROM_OUT
 		);
 
+	ROM_ADDR <= std_logic_vector(to_unsigned(ROM_IDX, ROM_ADDR'length));
+
 	-- -----------------------
 	--        Stlpce
 	-- -----------------------
@@ -82,8 +90,7 @@ begin
 		constant COLIDX   : COLIDX_T := COLIDX_T(i);
 		constant COLIDX_L : COLIDX_T := COLIDX_T((COLIDX - 1) mod WIDTH);
 		constant COLIDX_R : COLIDX_T := COLIDX_T((COLIDX + 1) mod WIDTH);
-
-		signal COL_NOW : std_logic_vector(HEIGHT - 1 downto 0);
+		signal COL_NOW    : std_logic_vector(HEIGHT - 1 downto 0); -- vhdl-linter-disable-line unused
 	begin
 		STAT_INIT(COLIDX) <= GETCOLUMN(ROM_OUT, COLIDX, HEIGHT);
 
@@ -105,18 +112,6 @@ begin
 		STAT_COL(COLIDX)  <= COL_NOW;
 		NEIGH_L(COLIDX_R) <= COL_NOW;
 		NEIGH_R(COLIDX_L) <= COL_NOW;
-	end generate;
-
-	-- Prepojenie susedov
-	NEIGH_L(0)         <= STAT_COL(WIDTH - 1);
-	NEIGH_R(WIDTH - 1) <= STAT_COL(0);
-
-	NEIGH_L_MAP : for i in 1 to WIDTH - 1 generate
-		NEIGH_L(i) <= STAT_COL(i - 1);
-	end generate;
-
-	NEIGH_R_MAP : for i in 0 to WIDTH - 2 generate
-		NEIGH_R(i) <= STAT_COL(i + 1);
 	end generate;
 
 	-- -----------------------
