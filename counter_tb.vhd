@@ -3,47 +3,48 @@
 -- @date 2023-03-14
 --
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.numeric_std.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-ENTITY counter_tb IS
-END counter_tb;
+entity counter_tb is
+end counter_tb;
 
-ARCHITECTURE behavior OF counter_tb IS
+architecture behavior of counter_tb is
 	-- Vstupy
-	SIGNAL CLK          : STD_LOGIC := '0';
-	SIGNAL RESET        : STD_LOGIC := '0';
+	signal CLK   : std_logic := '0';
+	signal RESET : std_logic := '0';
 
 	-- Vystupy
-	SIGNAL EN1          : STD_LOGIC;
-	SIGNAL EN2          : STD_LOGIC;
-	SIGNAL EN3          : STD_LOGIC;
+	signal EN1 : std_logic;
+	signal EN2 : std_logic;
+	signal EN3 : std_logic;
 
 	-- Hodinova perioda
-	CONSTANT CLK_period : TIME    := 10 ns;
+	constant CLK_period : time := 10 ns;
 
 	-- Vlajka pre koniec testu
-	SIGNAL DONE         : BOOLEAN := FALSE;
+	signal DONE : boolean := false;
 
 	-- Prevod boolean na std_logic pre ASSERT
-	FUNCTION b2sl (b    : BOOLEAN) RETURN STD_LOGIC IS BEGIN
-		IF b = TRUE THEN
-			RETURN '1';
-		ELSE
-			RETURN '0';
-		END IF;
-	END FUNCTION;
-BEGIN
+	function b2sl (b : boolean) return std_logic is
+	begin
+		if b = true then
+			return '1';
+		else
+			return '0';
+		end if;
+	end function;
+begin
 	-- Instaciacia jednotky pod testom (UUT)
 	--    Pocitejte s tim, ze pri zkouseni pobezi testbench 100 ms
-	uut : ENTITY work.counter
-		GENERIC MAP(
+	uut : entity work.counter
+		generic map(
 			OUT1_PERIOD => 2,
 			OUT2_PERIOD => 3,
 			OUT3_PERIOD => 5
 		)
-		PORT MAP(
+		port map(
 			CLK   => CLK,
 			RESET => RESET,
 			EN1   => EN1,
@@ -52,91 +53,92 @@ BEGIN
 		);
 
 	-- Hodinovy proces
-	CLK_process : PROCESS BEGIN
-		IF DONE = TRUE THEN
-			WAIT;
-		END IF;
+	CLK_process : process
+	begin
+		if DONE = true then
+			wait;
+		end if;
 
 		CLK <= '0';
-		WAIT FOR CLK_period/2;
+		wait for CLK_period/2;
 		CLK <= '1';
-		WAIT FOR CLK_period/2;
-	END PROCESS;
+		wait for CLK_period/2;
+	end process;
 
 	-- Stimulus
-	stim_proc : PROCESS IS
-		VARIABLE clk_i      : INTEGER := 1;
-		VARIABLE passed_rst : BOOLEAN := FALSE;
-		VARIABLE passed_now : BOOLEAN := FALSE;
-		VARIABLE cnt_pass   : NATURAL := 0;
-		VARIABLE cnt_fail   : NATURAL := 0;
-	BEGIN
+	stim_proc : process is
+		variable clk_i      : integer := 1;
+		variable passed_rst : boolean := false;
+		variable passed_now : boolean := false;
+		variable cnt_pass   : natural := 0;
+		variable cnt_fail   : natural := 0;
+	begin
 		RESET <= '1';
-		WAIT FOR 100 ns;
+		wait for 100 ns;
 		RESET <= '0';
 
-		REPORT "======================================" SEVERITY NOTE;
-		REPORT "*         counter testbench          *" SEVERITY NOTE;
-		REPORT "======================================" SEVERITY NOTE;
-		REPORT " " SEVERITY NOTE;
+		report "======================================" severity note;
+		report "*         counter testbench          *" severity note;
+		report "======================================" severity note;
+		report " " severity note;
 
-		WHILE clk_i <= 50 LOOP
-			WAIT FOR CLK_period;
+		while clk_i <= 50 loop
+			wait for CLK_period;
 
 			-- Test citacov
-			ASSERT EN1 = b2sl(clk_i MOD 2 = 0) REPORT "FAIL! Nespravny EN1 v CLK "
-			& INTEGER'image(clk_i) SEVERITY ERROR;
-			ASSERT EN2 = b2sl(clk_i MOD 3 = 0) REPORT "FAIL! Nespravny EN2 v CLK "
-			& INTEGER'image(clk_i) SEVERITY ERROR;
-			ASSERT EN3 = b2sl(clk_i MOD 5 = 0) REPORT "FAIL! Nespravny EN3 v CLK "
-			& INTEGER'image(clk_i) SEVERITY ERROR;
+			assert EN1 = b2sl(clk_i mod 2 = 0) report "FAIL! Nespravny EN1 v CLK "
+				& integer'image(clk_i) severity error;
+			assert EN2 = b2sl(clk_i mod 3 = 0) report "FAIL! Nespravny EN2 v CLK "
+				& integer'image(clk_i) severity error;
+			assert EN3 = b2sl(clk_i mod 5 = 0) report "FAIL! Nespravny EN3 v CLK "
+				& integer'image(clk_i) severity error;
 
 			-- Celkovy stav
-			passed_now := (EN1 = b2sl(clk_i MOD 2 = 0))
-				AND (EN2 = b2sl(clk_i MOD 3 = 0))
-				AND (EN3 = b2sl(clk_i MOD 5 = 0));
-			ASSERT passed_now = FALSE REPORT "PASS! Vsetky citace spravne v CLK "
-			& INTEGER'image(clk_i) SEVERITY NOTE;
+			passed_now := (EN1 = b2sl(clk_i mod 2 = 0))
+						and (EN2 = b2sl(clk_i mod 3 = 0))
+						and (EN3 = b2sl(clk_i mod 5 = 0));
+			assert passed_now = false report "PASS! Vsetky citace spravne v CLK "
+				& integer'image(clk_i) severity note;
 
-			IF passed_now = TRUE THEN
+			if passed_now = true then
 				cnt_pass := cnt_pass + 1;
-			ELSE
+			else
 				cnt_fail := cnt_fail + 1;
-			END IF;
+			end if;
 
 			clk_i := clk_i + 1;
-		END LOOP;
+		end loop;
 
 		-- Testy resetu
-		passed_rst := TRUE;
-		RESET       <= '1';
+		passed_rst := true;
+		RESET      <= '1';
 
-		WHILE clk_i <= 60 LOOP
-			WAIT FOR CLK_period;
+		while clk_i <= 60 loop
+			wait for CLK_period;
 
 			passed_now := (EN1 = '0')
-				AND (EN2 = '0')
-				AND (EN3 = '0');
-			ASSERT passed_now = TRUE REPORT "FAIL! Nefunkcny reset v CLK "
-			& INTEGER'image(clk_i) SEVERITY ERROR;
+						and (EN2 = '0')
+						and (EN3 = '0');
+			assert passed_now = true report "FAIL! Nefunkcny reset v CLK "
+				& integer'image(clk_i) severity error;
 
-			IF passed_now = TRUE THEN
+			if passed_now = true then
 				cnt_pass := cnt_pass + 1;
-			ELSE
+			else
 				cnt_fail   := cnt_fail + 1;
-				passed_rst := FALSE;
-			END IF;
+				passed_rst := false;
+			end if;
 
 			clk_i := clk_i + 1;
-		END LOOP;
-		ASSERT passed_rst = FALSE REPORT "PASS! Reset funguje v CLK 51-60" SEVERITY NOTE;
+		end loop;
+		assert passed_rst = false report "PASS! Reset funguje v CLK 51-60" severity note;
 
 		-- Vypis vysledkov
-		REPORT "======================================" SEVERITY NOTE;
-		REPORT " " SEVERITY NOTE;
-		REPORT "Citace spravne " & NATURAL'image(cnt_pass) & "-krat a chybne "
-			& NATURAL'image(cnt_fail) & "-krat za 60 CLK." SEVERITY NOTE;
-		DONE <= TRUE;
-		WAIT;
-	END PROCESS;
-END;
+		report "======================================" severity note;
+		report " " severity note;
+		report "Citace spravne " & natural'image(cnt_pass) & "-krat a chybne "
+			& natural'image(cnt_fail) & "-krat za 60 CLK." severity note;
+		DONE <= true;
+		wait;
+	end process;
+end;

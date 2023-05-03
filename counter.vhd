@@ -3,76 +3,79 @@
 -- @date 2023-03-14
 --
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY counter IS
-	GENERIC (
-		OUT1_PERIOD : POSITIVE := 1;
-		OUT2_PERIOD : POSITIVE := 1;
-		OUT3_PERIOD : POSITIVE := 1
+entity counter is
+	generic (
+		OUT1_PERIOD : positive := 1;
+		OUT2_PERIOD : positive := 1;
+		OUT3_PERIOD : positive := 1
 	);
-	PORT (
-		CLK   : IN  STD_LOGIC;
-		RESET : IN  STD_LOGIC;
-		EN1   : OUT STD_LOGIC;
-		EN2   : OUT STD_LOGIC;
-		EN3   : OUT STD_LOGIC
+	port (
+		CLK   : in  std_logic;
+		RESET : in  std_logic;
+		EN1   : out std_logic;
+		EN2   : out std_logic;
+		EN3   : out std_logic
 	);
-END counter;
+end counter;
 
-ARCHITECTURE behavioral OF counter IS
-	SIGNAL CNT1 : INTEGER RANGE 0 TO OUT1_PERIOD - 1 := 0;
-	SIGNAL CNT2 : INTEGER RANGE 0 TO OUT2_PERIOD - 1 := 0;
-	SIGNAL CNT3 : INTEGER RANGE 0 TO OUT3_PERIOD - 1 := 0;
-BEGIN
+architecture behavioral of counter is
+	signal CNT1 : integer range 0 to OUT1_PERIOD - 1 := 0;
+	signal CNT2 : integer range 0 to OUT2_PERIOD - 1 := 0;
+	signal CNT3 : integer range 0 to OUT3_PERIOD - 1 := 0;
+begin
 
 	-- Counter 1
-	p_cnt1 : PROCESS (CLK, RESET) BEGIN
-		IF RESET = '1' THEN
+	p_cnt1 : process (CLK, RESET)
+	begin
+		if RESET = '1' then
 			CNT1 <= 0;
 			EN1  <= '0';
-		ELSIF rising_edge(CLK) THEN
-			IF CNT1 = OUT1_PERIOD - 1 THEN
+		elsif rising_edge(CLK) then
+			if CNT1 = OUT1_PERIOD - 1 then
 				CNT1 <= 0;
 				EN1  <= '1';
-			ELSE
+			else
 				CNT1 <= CNT1 + 1;
 				EN1  <= '0';
-			END IF;
-		END IF;
-	END PROCESS;
+			end if;
+		end if;
+	end process;
 
 	-- Counter 2
-	p_cnt2 : PROCESS (CLK, RESET) BEGIN
-		IF RESET = '1' THEN
+	p_cnt2 : process (CLK, RESET)
+	begin
+		if RESET = '1' then
 			CNT2 <= 0;
 			EN2  <= '0';
-		ELSIF rising_edge(CLK) THEN
-			IF CNT2 = OUT2_PERIOD - 1 THEN
+		elsif rising_edge(CLK) then
+			if CNT2 = OUT2_PERIOD - 1 then
 				CNT2 <= 0;
 				EN2  <= '1';
-			ELSE
+			else
 				CNT2 <= CNT2 + 1;
 				EN2  <= '0';
-			END IF;
-		END IF;
-	END PROCESS;
+			end if;
+		end if;
+	end process;
 
 	-- Counter 3
-	p_cnt3 : PROCESS (CLK, RESET) BEGIN
-		IF RESET = '1' THEN
+	p_cnt3 : process (CLK, RESET)
+	begin
+		if RESET = '1' then
 			CNT3 <= 0;
 			EN3  <= '0';
-		ELSIF rising_edge(CLK) THEN
-			IF CNT3 = OUT3_PERIOD - 1 THEN
+		elsif rising_edge(CLK) then
+			if CNT3 = OUT3_PERIOD - 1 then
 				CNT3 <= 0;
 				EN3  <= '1';
-			ELSE
+			else
 				CNT3 <= CNT3 + 1;
 				EN3  <= '0';
-			END IF;
-		END IF;
-	END PROCESS;
+			end if;
+		end if;
+	end process;
 
-END behavioral;
+end behavioral;
