@@ -3,35 +3,35 @@
 -- @date 2023-05-01
 -- 
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-LIBRARY work;
-USE work.effects_pack.ALL;
+library work;
+use work.effects_pack.all;
 
-ENTITY fsm_tb IS
-END fsm_tb;
+entity fsm_tb is
+end fsm_tb;
 
-ARCHITECTURE behavior OF fsm_tb IS
+architecture behavior of fsm_tb is
 	-- Vstupy
-	SIGNAL EN           : STD_LOGIC := '0';
-	SIGNAL RESET        : STD_LOGIC := '0';
+	signal EN    : std_logic := '0';
+	signal RESET : std_logic := '0';
 
 	-- Vystupy
-	SIGNAL DIRECTION    : DIRECTION_T;
-	SIGNAL COL_EN       : STD_LOGIC;
-	SIGNAL COL_RST      : STD_LOGIC;
+	signal DIRECTION : DIRECTION_T;
+	signal COL_EN    : std_logic;
+	signal COL_RST   : std_logic;
 
 	-- Hodiny
-	CONSTANT CLK_period : TIME      := 10 ns;
-	SIGNAL CLK          : STD_LOGIC := '0';
+	constant CLK_period : time      := 10 ns;
+	signal CLK          : std_logic := '0';
 
 	-- Vlajka pre koniec testu
-	SIGNAL DONE         : BOOLEAN   := FALSE;
-BEGIN
+	signal DONE : boolean := false;
+begin
 	-- Instanciacia jednotky pod testom (UUT)
-	uut : ENTITY work.fsm
-		PORT MAP(
+	uut : entity work.fsm
+		port map(
 			CLK       => CLK,
 			EN        => EN,
 			RST       => RESET,
@@ -41,105 +41,106 @@ BEGIN
 		);
 
 	-- Hodinovy proces
-	CLK_process : PROCESS BEGIN
-		IF done = TRUE THEN
-			WAIT;
-		END IF;
+	CLK_process : process
+	begin
+		if done = true then
+			wait;
+		end if;
 
 		CLK <= '0';
-		WAIT FOR CLK_period/2;
+		wait for CLK_period/2;
 		CLK <= '1';
-		WAIT FOR CLK_period/2;
-	END PROCESS;
+		wait for CLK_period/2;
+	end process;
 
 	-- Stimulus
-	stim_proc : PROCESS IS
-		VARIABLE cnt      : INTEGER := 0;
-		VARIABLE fail_all : BOOLEAN := FALSE;
-	BEGIN
+	stim_proc : process is
+		variable cnt      : integer := 0;
+		variable fail_all : boolean := false;
+	begin
 		RESET <= '1';
-		WAIT FOR 100 ns;
+		wait for 100 ns;
 		RESET <= '0';
 
-		REPORT "======================================" SEVERITY NOTE;
-		REPORT "*            fsm testbench           *" SEVERITY NOTE;
-		REPORT "======================================" SEVERITY NOTE;
-		REPORT " " SEVERITY NOTE;
+		report "======================================" severity note;
+		report "*            fsm testbench           *" severity note;
+		report "======================================" severity note;
+		report " " severity note;
 
 		-- Pociatocny stav
-		ASSERT DIRECTION = DIR_RIGHT
-		REPORT "FAIL! Pociatocny stav nie je DIR_RIGHT" SEVERITY ERROR;
+		assert DIRECTION = DIR_RIGHT
+			report "FAIL! Pociatocny stav nie je DIR_RIGHT" severity error;
 
 		-- Posun doprava
 		EN <= '1';
-		FOR i IN 1 TO (16 * 3) LOOP
-			WAIT FOR CLK_period;
-			ASSERT (DIRECTION = DIR_RIGHT) AND (COL_EN = '1') AND (COL_RST = '0')
-			REPORT "FAIL! Neocakavany stav pri pohybe doprava" SEVERITY ERROR;
-			IF (DIRECTION /= DIR_RIGHT) THEN
-				fail_all := TRUE;
-			END IF;
-		END LOOP;
+		for i in 1 to (16 * 3) loop
+			wait for CLK_period;
+			assert (DIRECTION = DIR_RIGHT) and (COL_EN = '1') and (COL_RST = '0')
+				report "FAIL! Neocakavany stav pri pohybe doprava" severity error;
+			if (DIRECTION /= DIR_RIGHT) then
+				fail_all := true;
+			end if;
+		end loop;
 
-		WAIT FOR CLK_period;
-		ASSERT (COL_EN = '0') AND (COL_RST = '1')
-		REPORT "FAIL! Chybny reset alebo povolovac po pohybe doprava" SEVERITY ERROR;
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '1')
+			report "FAIL! Chybny reset alebo povolovac po pohybe doprava" severity error;
 
 		-- Posun dolava
-		FOR i IN 1 TO (16 * 3) LOOP
-			WAIT FOR CLK_period;
-			ASSERT DIRECTION = DIR_LEFT
-			REPORT "FAIL! Neocakavany stav pri pohybe dolava" SEVERITY ERROR;
-			IF (DIRECTION /= DIR_LEFT) THEN
-				fail_all := TRUE;
-			END IF;
-		END LOOP;
+		for i in 1 to (16 * 3) loop
+			wait for CLK_period;
+			assert DIRECTION = DIR_LEFT
+				report "FAIL! Neocakavany stav pri pohybe dolava" severity error;
+			if (DIRECTION /= DIR_LEFT) then
+				fail_all := true;
+			end if;
+		end loop;
 
-		WAIT FOR CLK_period;
-		ASSERT (COL_EN = '0') AND (COL_RST = '1')
-		REPORT "FAIL! Chybny reset alebo povolovac po pohybe dolava" SEVERITY ERROR;
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '1')
+			report "FAIL! Chybny reset alebo povolovac po pohybe dolava" severity error;
 
 		-- Posun nahor
-		FOR i IN 1 TO 8 LOOP
-			WAIT FOR CLK_period;
-			ASSERT DIRECTION = DIR_TOP
-			REPORT "FAIL! Neocakavany stav pri pohybe nahor" SEVERITY ERROR;
-			IF (DIRECTION /= DIR_TOP) THEN
-				fail_all := TRUE;
-			END IF;
-		END LOOP;
+		for i in 1 to 8 loop
+			wait for CLK_period;
+			assert DIRECTION = DIR_TOP
+				report "FAIL! Neocakavany stav pri pohybe nahor" severity error;
+			if (DIRECTION /= DIR_TOP) then
+				fail_all := true;
+			end if;
+		end loop;
 
-		WAIT FOR CLK_period;
-		ASSERT (COL_EN = '0') AND (COL_RST = '1')
-		REPORT "FAIL! Chybny reset alebo povolovac po pohybe nahor" SEVERITY ERROR;
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '1')
+			report "FAIL! Chybny reset alebo povolovac po pohybe nahor" severity error;
 
 		-- Ripple (vlastna animacia)
-		FOR i IN 1 TO 5 LOOP
-			WAIT FOR CLK_period;
-			ASSERT DIRECTION = DIR_TOP_BOTTOM
-			REPORT "FAIL! Neocakavany stav pri obojsmernom posuve" SEVERITY ERROR;
-			IF (DIRECTION /= DIR_TOP_BOTTOM) THEN
-				fail_all := TRUE;
-			END IF;
-		END LOOP;
+		for i in 1 to 5 loop
+			wait for CLK_period;
+			assert DIRECTION = DIR_TOP_BOTTOM
+				report "FAIL! Neocakavany stav pri obojsmernom posuve" severity error;
+			if (DIRECTION /= DIR_TOP_BOTTOM) then
+				fail_all := true;
+			end if;
+		end loop;
 
-		ASSERT fail_all = TRUE REPORT "PASS! Spravny pohyb stavov" SEVERITY NOTE;
+		assert fail_all = true report "PASS! Spravny pohyb stavov" severity note;
 
 		-- Reset test
 		RESET <= '1';
-		WAIT FOR CLK_period;
-		ASSERT (COL_EN = '0') AND (COL_RST = '1')
-		REPORT "FAIL! Chybne EN/RST po FSM resete" SEVERITY ERROR;
+		wait for CLK_period;
+		assert (COL_EN = '0') and (COL_RST = '1')
+			report "FAIL! Chybne EN/RST po FSM resete" severity error;
 
 		RESET <= '0';
-		WAIT FOR CLK_period;
-		ASSERT (COL_EN = '1') AND (COL_RST = '0')
-		REPORT "FAIL! Chybne EN/RST po FSM resete" SEVERITY ERROR;
+		wait for CLK_period;
+		assert (COL_EN = '1') and (COL_RST = '0')
+			report "FAIL! Chybne EN/RST po FSM resete" severity error;
 
-		ASSERT DIRECTION /= DIR_RIGHT REPORT "PASS! Spravny smer po resete" SEVERITY NOTE;
-		ASSERT DIRECTION = DIR_RIGHT REPORT "FAIL! Nespravny smer po resete" SEVERITY ERROR;
+		assert DIRECTION /= DIR_RIGHT report "PASS! Spravny smer po resete" severity note;
+		assert DIRECTION = DIR_RIGHT report "FAIL! Nespravny smer po resete" severity error;
 
-		DONE <= TRUE;
-		WAIT;
-	END PROCESS;
-END;
+		DONE <= true;
+		wait;
+	end process;
+end;

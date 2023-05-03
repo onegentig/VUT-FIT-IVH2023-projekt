@@ -3,107 +3,104 @@
 -- @date 2023-04-22
 --
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-LIBRARY work;
-USE work.effects_pack.ALL;
+library work;
+use work.effects_pack.all;
 
-ENTITY fsm IS
-	PORT (
-		CLK       : IN STD_LOGIC;
-		EN        : IN STD_LOGIC;
-		RST       : IN STD_LOGIC;
-		DIRECTION : OUT DIRECTION_T;
-		COL_EN    : OUT STD_LOGIC := '0';
-		COL_RST   : OUT STD_LOGIC := '1'
+entity fsm is
+	port (
+		CLK       : in  std_logic;
+		EN        : in  std_logic;
+		RST       : in  std_logic;
+		DIRECTION : out DIRECTION_T;
+		COL_EN    : out std_logic := '0';
+		COL_RST   : out std_logic := '1'
 	);
-END ENTITY fsm;
+end entity fsm;
 
-ARCHITECTURE behavioral OF fsm IS
-	SIGNAL pstate   : STATE_T := RIGHT_ROTATION; -- Aktualny stav
+architecture behavioral of fsm is
+	signal pstate : STATE_T := RIGHT_ROTATION;  -- Aktualny stav
 
-	SIGNAL CNT_ROT  : INTEGER := 0;              -- Citac otociek
-	SIGNAL CNT_STEP : INTEGER := 0;              -- Citac krokov
-BEGIN
-	state_logic : PROCESS (CLK, RST) IS
-	BEGIN
-		IF RST = '1' THEN
-			pstate   <= RIGHT_ROTATION;
-			CNT_ROT  <= 0;
-			CNT_STEP <= 0;
-			COL_EN   <= '0';
-			COL_RST  <= '1';
-		ELSIF rising_edge(CLK) AND EN = '1' THEN
-			IF EN = '1' THEN
+	signal CNT_ROT  : integer := 0;             -- Citac otociek
+	signal CNT_STEP : integer := 0;             -- Citac krokov
+
+	-- Procedura na reset citacov a vlajok
+	procedure backdown (signal STEP : out integer; signal ROT : out integer; signal ENABLE : out std_logic; signal RESET : out std_logic) is
+	begin
+		STEP   <= 0;
+		ROT    <= 0;
+		ENABLE <= '0';
+		RESET  <= '1';
+	end procedure;
+begin
+	state_logic : process (CLK, RST) is
+	begin
+		if RST = '1' then
+			pstate <= RIGHT_ROTATION;
+			backdown(CNT_STEP, CNT_ROT, COL_EN, COL_RST);
+		elsif rising_edge(CLK) then
+			if EN = '1' then
 				CNT_STEP <= CNT_STEP + 1;
 
-				CASE pstate IS
-					WHEN RIGHT_ROTATION =>
+				case pstate is
+					when RIGHT_ROTATION =>
 						DIRECTION <= DIR_RIGHT;
 
-						IF (CNT_STEP = 16 - 1) THEN
+						if (CNT_STEP = 16 - 1) then
 							CNT_ROT  <= CNT_ROT + 1;
 							CNT_STEP <= 0;
-						END IF;
+						end if;
 
-						IF (CNT_ROT = 3) THEN
-							CNT_ROT  <= 0;
-							CNT_STEP <= 0;
-							COL_EN   <= '0';
-							COL_RST  <= '1';
-							pstate   <= LEFT_ROTATION;
-						ELSE
+						if (CNT_ROT = 3) then
+							backdown(CNT_STEP, CNT_ROT, COL_EN, COL_RST);
+							pstate <= LEFT_ROTATION;
+						else
 							COL_EN  <= '1';
 							COL_RST <= '0';
-						END IF;
+						end if;
 
-					WHEN LEFT_ROTATION =>
+					when LEFT_ROTATION =>
 						DIRECTION <= DIR_LEFT;
 
-						IF (CNT_STEP = 16 - 1) THEN
+						if (CNT_STEP = 16 - 1) then
 							CNT_ROT  <= CNT_ROT + 1;
 							CNT_STEP <= 0;
-						END IF;
+						end if;
 
-						IF (CNT_ROT = 3) THEN
-							CNT_ROT  <= 0;
-							CNT_STEP <= 0;
-							COL_EN   <= '0';
-							COL_RST  <= '1';
-							pstate   <= ROLL_UP;
-						ELSE
+						if (CNT_ROT = 3) then
+							backdown(CNT_STEP, CNT_ROT, COL_EN, COL_RST);
+							pstate <= ROLL_UP;
+						else
 							COL_RST <= '0';
 							COL_EN  <= '1';
-						END IF;
+						end if;
 
-					WHEN ROLL_UP =>
+					when ROLL_UP =>
 						DIRECTION <= DIR_TOP;
 
-						IF (CNT_STEP = 8) THEN
-							CNT_ROT  <= 0;
-							CNT_STEP <= 0;
-							COL_EN   <= '0';
-							COL_RST  <= '1';
-							pstate   <= RIPPLE;
-						ELSE
+						if (CNT_STEP = 8) then
+							backdown(CNT_STEP, CNT_ROT, COL_EN, COL_RST);
+							pstate <= RIPPLE;
+						else
 							COL_RST <= '0';
 							COL_EN  <= '1';
-						END IF;
+						end if;
 
-					WHEN RIPPLE =>
+					when RIPPLE =>
 						DIRECTION <= DIR_TOP_BOTTOM;
 						COL_RST   <= '0';
 
-						IF (CNT_STEP = (8 / 2) + 1) THEN
+						if (CNT_STEP = (8 / 2) + 1) then
 							COL_EN <= '0';
-						ELSE
+						else
 							COL_EN <= '1';
-						END IF;
-				END CASE;
-			ELSE
+						end if;
+				end case;
+			else
 				COL_EN <= '0';
-			END IF;
-		END IF;
-	END PROCESS;
-END ARCHITECTURE behavioral;
+			end if;
+		end if;
+	end process;
+end architecture behavioral;
