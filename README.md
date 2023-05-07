@@ -1,6 +1,12 @@
 # IVH PROJEKT, FIT VUT 2023 #
 
-*Projekt (animácia na maticovom displeji) z predmetu Seminár VHDL (IVH), štvrtý semester bakalárskeho štúdia BIT na FIT VUT/BUT, ak.rok 2022/2023*
+*Projekt (animácia na maticovom displeji) z predmetu Seminár VHDL (IVH), štvrtý semester bakalárskeho štúdia BIT na FIT VUT/BUT, ak.rok 2022/2023.*
+
+<div align="center">
+
+![Screencast_from_2023-05-07_14-02-49](https://user-images.githubusercontent.com/84882649/236679047-910e92b3-4330-47ba-80a1-d265b456d3ec.gif)
+
+</div>
 
 🔒 **Aktívny súkromný repozitár — nezverejňovať!**
 
