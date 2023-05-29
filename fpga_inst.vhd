@@ -1,5 +1,5 @@
 -- Top-Module IVH projektu 2023
--- @author Onegen Something <xonege99@vutbr.cz>
+-- @author Onegen Something <xkrame00@vutbr.cz>
 -- @date 2023-05-03
 --
 

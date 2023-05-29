@@ -1,5 +1,4 @@
 -- Testbench pre package effects_pack.vhd
--- @author Onegen Something <xonege99@vutbr.cz>
 -- @date 2023-03-09
 --
 

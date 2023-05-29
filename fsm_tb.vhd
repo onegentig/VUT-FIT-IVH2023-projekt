@@ -1,5 +1,4 @@
 -- Testbench stavovej logiky
--- @author Onegen Something <xonege99@vutbr.cz>
 -- @date 2023-05-01
 -- 
 

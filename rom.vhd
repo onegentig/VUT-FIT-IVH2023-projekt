@@ -1,5 +1,5 @@
 -- ROM obrazkov
--- @author Onegen Something <xonege99@vutbr.cz>
+-- @author Onegen Something <xkrame00@vutbr.cz>
 -- @date 2023-04-30
 --
 
