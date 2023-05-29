@@ -8,7 +8,7 @@
     <img alt="demo" src="https://user-images.githubusercontent.com/84882649/236679047-910e92b3-4330-47ba-80a1-d265b456d3ec.gif" width="20%">
 </div>
 
-Celkové hodnotenie: ?? / 90<br>（?）
+Celkové hodnotenie: 80 / 90<br>（-5b za 32bit logiku, -5b za viachodinovú synchronizáciu）
 
 Zadanie: [ZADANI.md](ZADANI.md), originál [MOODLE PDF](https://moodle.vut.cz/pluginfile.php/569728/mod_resource/content/0/Projekt%202023%20Sv%C4%9Bteln%C3%A9%20efekty%20na%20FPGA%20a%20FITkitu.pdf) & [MOODLE PREZ](https://moodle.vut.cz/pluginfile.php/569729/mod_resource/content/0/04-projekt-efekty.pdf)
 
@@ -16,12 +16,12 @@ Zadanie: [ZADANI.md](ZADANI.md), originál [MOODLE PDF](https://moodle.vut.cz/pl
 
 - **Podúloha 1** — 10 / 10
 - **Podúloha 2** — 15 / 15
-- **Konečný výsledok** — ?? / 65
-  - Instanciácia a ovládanie — ?? / 20
-  - Posuvy — ?? / 15
-  - Výstupná animácia — ?? / 10
-  - Pamäť a pamäťový testbench — ?? / 10
-  - Stavový testbench — ?? / 10
+- **Konečný výsledok** — 55 / 65
+  - Instanciácia a ovládanie — 10 / 20
+  - Posuvy — 15 / 15
+  - Výstupná animácia — 10 / 10
+  - Pamäť a pamäťový testbench —  10 / 10
+  - Stavový testbench — 10 / 10
 
 ----------------------------------------------
 
